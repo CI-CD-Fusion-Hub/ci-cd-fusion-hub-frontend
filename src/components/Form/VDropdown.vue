@@ -1,51 +1,96 @@
 <template>
-  <div class="dropdown-holder"  :tooltip-text="tooltipText" :tooltip-position="tooltipPos">
-    <a href="javascript:;" :class="`drop-down-btn is-multyselect-${isMultyselect}`" @click="toggleDropdown">
-      <font-awesome-icon v-if="icon" :icon="icon" />
+  <div
+    class="dropdown-holder"
+    :tooltip-text="tooltipText"
+    :tooltip-position="tooltipPos"
+  >
+    <a
+      href="javascript:;"
+      :class="`drop-down-btn is-multyselect-${isMultyselect}`"
+      @click="toggleDropdown"
+    >
+      <font-awesome-icon
+        v-if="icon"
+        :icon="icon"
+      />
       <template v-if="Array.isArray(dropdownPlaceholder)">
-        <div v-for="item in dropdownPlaceholder" :key="item" class="dropdown-tag">
+        <div
+          v-for="item in dropdownPlaceholder"
+          :key="item"
+          class="dropdown-tag"
+        >
           <span v-if="optionLabel">{{ item[optionLabel] }}</span>
           <span v-else>{{ item }}</span>
-          <font-awesome-icon :icon="['fas', 'xmark']"  @click.stop="removeValue(item)" />
+          <font-awesome-icon
+            :icon="['fas', 'xmark']"
+            @click.stop="removeValue(item)"
+          />
         </div>
-        <span v-if="dropdownPlaceholder.length == 0">{{ this.placeholder }}</span>
+        <span v-if="dropdownPlaceholder.length == 0">{{ placeholder }}</span>
       </template>
       <span v-else-if="data">{{ data }}</span>
       <span v-else>{{ dropdownPlaceholder }}</span>
-      <font-awesome-icon :icon="['fas', 'chevron-down']" :class="`is-dropdown-open-` + isOpen" />
+      <font-awesome-icon
+        :icon="['fas', 'chevron-down']"
+        :class="`is-dropdown-open-` + isOpen"
+      />
     </a>
     <div :class="`is-visible-${isOpen}`">
-      <div class="input-holder" v-if="isSearchable && options.length !== 0">
-        <input type="text" placeholder="" :id="name" @input="searchValue = $event.target.value" />
+      <div
+        v-if="isSearchable && options.length !== 0"
+        class="input-holder"
+      >
+        <input
+          :id="name"
+          type="text"
+          placeholder=""
+          @input="searchValue = $event.target.value"
+        >
         <label :for="name">Search</label>
         <font-awesome-icon :icon="['fas', 'magnifying-glass']" />
       </div>
       <ul>
         <li v-if="filterResults.length === 0">
-          <div class="no-data"><font-awesome-icon :icon="['fas', 'ghost']" />No Data</div>
+          <div class="no-data">
+            <font-awesome-icon :icon="['fas', 'ghost']" />No Data
+          </div>
         </li>
-        <li v-for="item in filterResults" :key="item">
-          <a href="javascript:;" v-if="optionValue && optionLabel" @click="selectValue(item)">{{ item[optionLabel] }}</a>
-          <a href="javascript:;" v-else @click="selectValue(item)">{{ item }}</a>
+        <li
+          v-for="item in filterResults"
+          :key="item"
+        >
+          <a
+            v-if="optionValue && optionLabel"
+            href="javascript:;"
+            @click="selectValue(item)"
+          >{{ item[optionLabel] }}</a>
+          <a
+            v-else
+            href="javascript:;"
+            @click="selectValue(item)"
+          >{{ item }}</a>
         </li>
       </ul>
     </div>
-    <input type="hidden" :name="name" :value="data" />
+    <input
+      type="hidden"
+      :name="name"
+      :value="data"
+    >
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Button from '../Button.vue'
+<script>
+import VButton from '../VButton.vue'
 
-export default defineComponent({
+export default {
   component: {
-    Button
+    VButton
   },
   props: {
     options: {
       type: Array,
-      default: [],
+      default: () => [],
       required: true
     },
     optionLabel: {
@@ -66,11 +111,11 @@ export default defineComponent({
     },
     data: {
       type: Array,
-      default: null,
+      default: () => [],
     },
     icon: {
       type: Array,
-      default: ['fas', 'flag'],
+      default: () => ['fas', 'flag'],
     },
     isSearchable: {
       type: Boolean,
@@ -89,6 +134,7 @@ export default defineComponent({
       default: 'Left',
     }
   },
+  emits: ['update:data'],
   data() {
     return {
       isOpen: false,
@@ -98,7 +144,7 @@ export default defineComponent({
     };
   },
   computed: {
-    filterResults(): Array<String> {
+    filterResults() {
       if (!this.options) {
         return []
       }
@@ -148,7 +194,7 @@ export default defineComponent({
       })
     }
   },
-});
+};
 </script>
 
 

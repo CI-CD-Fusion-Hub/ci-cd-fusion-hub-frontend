@@ -1,8 +1,22 @@
 <template>
-  <div class="input-holder" :tooltip-text="tooltipText" :tooltip-position="tooltipPos">
-    <input :type="type" :name="name" :id="name" placeholder="" :value="data" @input="$emit('update:data', $event.target.value)" />
+  <div
+    class="input-holder"
+    :tooltip-text="tooltipText"
+    :tooltip-position="tooltipPos"
+  >
+    <input
+      :id="name"
+      :type="type"
+      :name="name"
+      placeholder=""
+      :value="data"
+      @input="$emit('update:data', $event.target.value)"
+    >
     <label :for="name">{{ placeholder }}</label>
-    <font-awesome-icon v-if="icon" :icon="icon" />
+    <font-awesome-icon
+      v-if="icon"
+      :icon="icon"
+    />
   </div>
 </template>
 
@@ -23,7 +37,7 @@ export default {
     },
     icon: {
       type: Array,
-      default: ['fas', 'users'],
+      default: () => ['fas', 'users'],
     },
     type: {
       type: String,
@@ -37,7 +51,8 @@ export default {
       type: String,
       default: 'Left',
     }
-  }
+  },
+  emits: ['update:data']
 };
 </script>
 

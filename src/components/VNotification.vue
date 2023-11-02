@@ -1,25 +1,35 @@
 <template>
   <div>
-    <div v-if="all_notifications.length > 0" class="notifications">
-      <div v-for="(notification, index) in all_notifications" :key="index" :class="`notification ${notification.status}`">
+    <div
+      v-if="all_notifications.length > 0"
+      class="notifications"
+    >
+      <div
+        v-for="(notification, index) in all_notifications"
+        :key="index"
+        :class="`notification ${notification.status}`"
+      >
         <font-awesome-icon :icon="status_icon[notification.status]" />
         <div>
           {{ notification.message }}
         </div>
-        <Button :icon="['fas', 'xmark']" @onClick="remove_notification(index)" class="btn-notification" />
+        <VButton
+          :icon="['fas', 'xmark']"
+          class="btn-notification"
+          @on-click="remove_notification(index)"
+        />
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Button from '../components/Button.vue'
+<script>
+import VButton from './VButton.vue'
 import { useNotifyStore } from '../stores/notifications'
 
-export default defineComponent({
+export default {
   components: {
-    Button,
+    VButton,
   },
   data() {
     return {
@@ -35,7 +45,7 @@ export default defineComponent({
       this.all_notifications.pop(index)
     }
   }
-});
+};
 </script>
 
 <style>

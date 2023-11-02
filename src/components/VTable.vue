@@ -1,60 +1,126 @@
 <template>
   <div>
-    <div class="table_search" v-if="isSearchable">
-      <TextInput name="table_search" placeholder="Search" :icon="['fas', 'magnifying-glass']" :data="search_text" @keyup.enter="filterResults($event.target.value)" />
+    <div
+      v-if="isSearchable"
+      class="table_search"
+    >
+      <VTextInput
+        name="table_search"
+        placeholder="Search"
+        :icon="['fas', 'magnifying-glass']"
+        :data="search_text"
+        @keyup.enter="filterResults($event.target.value)"
+      />
     </div>
     <div>
       <table>
-        <div class="loader" v-if="isLoading">
-          <font-awesome-icon :icon="['fas', 'spinner']" spin />
+        <div
+          v-if="isLoading"
+          class="loader"
+        >
+          <font-awesome-icon
+            :icon="['fas', 'spinner']"
+            spin
+          />
         </div>
         <thead>
           <tr>
-            <th v-if="showRowIndex" class="index_row">#</th>
+            <th
+              v-if="showRowIndex"
+              class="index_row"
+            >
+              #
+            </th>
             <template v-for="slot in get_slots">
-              <th v-for="column in $slots[slot]()" :key="column.value">{{ column.props ? column.props.header : '' }}</th>
+              <th
+                v-for="column in $slots[slot]()"
+                :key="column.value"
+              >
+                {{ column.props ? column.props.header : '' }}
+              </th>
             </template>
           </tr>
         </thead>
         <tbody>
           <tr v-if="get_page_items.length === 0">
-            <td colspan="100" class="empty_data"><font-awesome-icon :icon="['fas', 'ghost']" /> No Data</td>
+            <td
+              colspan="100"
+              class="empty_data"
+            >
+              <font-awesome-icon :icon="['fas', 'ghost']" /> No Data
+            </td>
           </tr>
-          <tr v-for="(row, index) in get_page_items" :key="row">
-            <td v-if="showRowIndex" class="index_row">{{ (index + 1) + page_size * (get_active_page - 1) }}</td>
-            <template v-for="slot in get_slots" :key="slot">
-              <template v-for="column in $slots[slot]()" :key="column.id">
-                <td v-if="!column.children && column.props.value">{{ row[column.props.value] }}</td>
-                <slot :name="column.props.value" :item="row" />
+          <tr
+            v-for="(row, index) in get_page_items"
+            :key="row"
+          >
+            <td
+              v-if="showRowIndex"
+              class="index_row"
+            >
+              {{ (index + 1) + pageSize * (get_active_page - 1) }}
+            </td>
+            <template
+              v-for="slot in get_slots"
+              :key="slot"
+            >
+              <template
+                v-for="column in $slots[slot]()"
+                :key="column.id"
+              >
+                <td v-if="!column.children && column.props.value">
+                  {{ row[column.props.value] }}
+                </td>
+                <slot
+                  :name="column.props.value"
+                  :item="row"
+                />
               </template>
             </template>
           </tr>
         </tbody>
       </table>
 
-      <nav class="pagination_holder" v-if="pagination && total_pages > 1">
-        <Button :icon="['fas', 'chevron-left']" @onClick="change_page(get_active_page - 1)" tooltipText="Prev"/>
-        <ButtonSet>
-          <Button v-for="n in total_pages" :isActive="get_active_page === n ? true : false" :key="n" @onClick="change_page(n)">{{ n }}</Button>
-        </ButtonSet>
-        <Button :icon="['fas', 'chevron-right']" @onClick="change_page(get_active_page + 1)" tooltipText="Next"/>
+      <nav
+        v-if="pagination && total_pages > 1"
+        class="pagination_holder"
+      >
+        <VButton
+          :icon="['fas', 'chevron-left']"
+          tooltip-text="Prev"
+          @on-click="change_page(get_active_page - 1)"
+        />
+        <VButtonSet>
+          <VButton
+            v-for="n in total_pages"
+            :key="n"
+            :is-active="get_active_page === n ? true : false"
+            @on-click="change_page(n)"
+          >
+            {{ n }}
+          </VButton>
+        </VButtonSet>
+        <VButton
+          :icon="['fas', 'chevron-right']"
+          tooltip-text="Next"
+          @on-click="change_page(get_active_page + 1)"
+        />
       </nav>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import ButtonSet from './ButtonSet.vue';
-import Button from './Button.vue';
-import TextInput from './Form/TextInput.vue';
+<script>
+import VButtonSet from './VButtonSet.vue';
+import VButton from './VButton.vue';
+import VTextInput from './Form/VTextInput.vue';
 
-export default defineComponent({
-  components: { Button, ButtonSet, TextInput },
+export default {
+  components: { VButton, VButtonSet, VTextInput },
   props: {
     tableData: {
       type: Array,
-      default: []
+      default: () => []
     },
     showRowIndex: {
       type: Boolean,
@@ -68,7 +134,7 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    page_size: {
+    pageSize: {
       type: Number,
       default: 15,
     },
@@ -76,24 +142,24 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    search_in_columns: {
+    searchInColumns: {
       type: Array,
-      default: [],
+      default: () => [],
     },
   },
   data() {
     return {
-      search_text: this.$route.query.search || ''
+      search_text: this.$route?.query.search || ''
     }
   },
   computed: {
-    total_pages(): Number {
-      return Math.round(this.filtered_items.length / this.page_size) || 1;
+    total_pages() {
+      return Math.round(this.filtered_items.length / this.pageSize) || 1;
     },
-    get_active_page(): Number {
+    get_active_page() {
       return parseInt(this.$route.query.page) || 1;
     },
-    get_slots(): Object {
+    get_slots() {
       let slots = Object.keys(this.$slots);
 
       if (slots.includes('default')) {
@@ -103,19 +169,19 @@ export default defineComponent({
 
       return slots;
     },
-    get_page_items(): Array<Object> {
+    get_page_items() {
       if (this.pagination){
-        return this.filtered_items.slice((this.get_active_page - 1) * this.page_size, this.get_active_page * this.page_size);
+        return this.filtered_items.slice((this.get_active_page - 1) * this.pageSize, this.get_active_page * this.pageSize);
       }
       return this.filtered_items
     },
-    filtered_items(): Array<Object> {
+    filtered_items() {
       if(this.isSearchable === true) {
         return this.tableData.filter((item) => {
           let item_match = false;
           let search = this.search_text.toLowerCase()
           
-          this.search_in_columns.forEach(element => {
+          this.searchInColumns.forEach(element => {
             if (!(element in item)){
               console.log("Please, select valid column name that should be used for filtering.")
               return
@@ -135,22 +201,22 @@ export default defineComponent({
     }
   },
   methods: {
-    change_page(n: Number) {
+    change_page(n) {
       if (n >= 1 && n <= this.total_pages) {
         this.$router.push({ path: this.$route.path, query: Object.assign({}, this.$route.query, { page: n }) });
       }
     },
-    filterResults(e: String = '') {
+    filterResults(e) {
       this.$router.push({ path: this.$route.path, query: this.pagination ? { search: e, page: 1 } :  { search: e}});
 
       this.search_text = e.toLowerCase()
     },
   },
-});
+};
 </script>
 
 
-<style scoped>
+<style>
 .loader {
   position: absolute;
   width: 100%;
@@ -188,7 +254,7 @@ thead {
 }
 
 th, td {
-  padding: 8px 15px;
+  padding: 5px 15px;
   text-align: left;
 }
 

@@ -1,28 +1,52 @@
 <template>
   <div :class="`btn-holder ` + (isActive ? 'active' : '')">
-    <router-link :to="linkTo" v-if="Object.keys(linkTo).length > 0">
-      <button :tooltip-text="tooltipText" :tooltip-position="tooltipPos" @click="onClick">
-        <font-awesome-icon v-if="icon.length > 0 && !isLoading" :icon="icon" />
-        <font-awesome-icon v-else-if="icon.length > 0 && isLoading" :icon="['fas', 'spinner']" spin />
-        <span v-if="$slots.default"><slot></slot></span>
+    <router-link
+      v-if="Object.keys(linkTo).length > 0"
+      :to="linkTo"
+    >
+      <button
+        :tooltip-text="tooltipText"
+        :tooltip-position="tooltipPos"
+        @click="onClick"
+      >
+        <font-awesome-icon
+          v-if="icon.length > 0 && !isLoading"
+          :icon="icon"
+        />
+        <font-awesome-icon
+          v-else-if="icon.length > 0 && isLoading"
+          :icon="['fas', 'spinner']"
+          spin
+        />
+        <span v-if="$slots.default"><slot /></span>
       </button>
     </router-link>
-    <button v-else :tooltip-text="tooltipText" :tooltip-position="tooltipPos" @click="onClick">
-      <font-awesome-icon v-if="icon.length > 0 && !isLoading" :icon="icon" />
-      <font-awesome-icon v-else-if="icon.length > 0 && isLoading" :icon="['fas', 'spinner']" spin />
-      <span v-if="$slots.default"><slot></slot></span>
+    <button
+      v-else
+      :tooltip-text="tooltipText"
+      :tooltip-position="tooltipPos"
+      @click="onClick"
+    >
+      <font-awesome-icon
+        v-if="icon.length > 0 && !isLoading"
+        :icon="icon"
+      />
+      <font-awesome-icon
+        v-else-if="icon.length > 0 && isLoading"
+        :icon="['fas', 'spinner']"
+        spin
+      />
+      <span v-if="$slots.default"><slot /></span>
     </button>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
-
-export default defineComponent({
+<script>
+export default {
   props: {
     icon: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     data: {
       type: String,
@@ -34,7 +58,7 @@ export default defineComponent({
     },
     linkTo: {
       type: Object,
-      default: {},
+      default: () => ({}),
     },
     isActive: {
       type: Boolean,
@@ -57,12 +81,13 @@ export default defineComponent({
       default: 'Top',
     }
   },
+  emits: ['onClick'],
   methods: {
     onClick(){
       this.$emit('onClick');
     }
   },
-});
+};
 </script>
 
 

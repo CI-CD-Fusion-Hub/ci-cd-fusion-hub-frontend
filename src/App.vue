@@ -1,10 +1,10 @@
 
 <script>
-import AsideMenu from './components/AsideMenu.vue';
+import VAsideMenu from './components/VAsideMenu.vue';
 import { useUserStore } from './stores/user'
 
 export default{
-  components: { AsideMenu },
+  components: { VAsideMenu },
   created() {
     const userInfo = useUserStore()
     if (!window.location.href.includes('/login') && !window.location.href.includes('/logout')){
@@ -16,13 +16,13 @@ export default{
 </script>
 
 <template>
-  <AsideMenu v-if="!this.$route.path.includes('login')"/>
+  <VAsideMenu v-if="!$route.path.includes('login')" />
 
   <main>
     <router-view />
   </main>
 
-  <Notification />
+  <VNotification />
 </template>
 
 <style>

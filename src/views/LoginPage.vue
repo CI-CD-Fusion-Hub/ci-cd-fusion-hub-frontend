@@ -3,23 +3,39 @@
     <div class="login_form">
       <h1>Fusion Hub</h1>
       <p>Signin to your Account</p>
-      <TextInput name="email" placeholder="Email" :icon="['fas', 'fa-user-tag']" v-model:data="formData.email" />
-      <TextInput name="password" placeholder="Password" type="password" :icon="['fas', 'key']" v-model:data="formData.password" />
-      <Button :icon="['fas', 'fa-right-to-bracket']" @onClick="login()">Login</Button>
+      <VTextInput
+        v-model:data="formData.email"
+        name="email"
+        placeholder="Email"
+        :icon="['fas', 'fa-user-tag']"
+      />
+      <VTextInput
+        v-model:data="formData.password"
+        name="password"
+        placeholder="Password"
+        type="password"
+        :icon="['fas', 'key']"
+      />
+      <VButton
+        :icon="['fas', 'fa-right-to-bracket']"
+        @on-click="login()"
+      >
+        Login
+      </VButton>
     </div>
   </div>
 </template>
 
 <script>
-import TextInput from '../components/Form/TextInput.vue';
-import Button from '../components/Button.vue';
+import VTextInput from '../components/Form/VTextInput.vue';
+import VButton from '../components/VButton.vue';
 import { useNotifyStore } from '../stores/notifications'
 import { useUserStore } from '../stores/user'
 
 export default {
   components: {
-    TextInput,
-    Button
+    VTextInput,
+    VButton
   },
   data() {
     return {

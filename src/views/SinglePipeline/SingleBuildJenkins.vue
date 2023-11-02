@@ -1,55 +1,65 @@
 <template>
-    <div class="loader" v-if="!buildInfo.name">
-        <font-awesome-icon :icon="['fas', 'spinner']" spin />
-    </div>
-    <div v-else>
-        <div class="build_info">
-            <code :ref="buildInfo.name">
-                <div v-for="(line, index) in buildInfo.log" :key="index">
-                    <div class="line_number">{{ index + 1 }}</div>
-                    <div class="text_holder">{{ line }}</div>
-                </div>
-                <div v-if="buildInfo.status === 'running'" class="loader_log">
-                    <div class="text_holder">
-                        <font-awesome-icon :icon="['fas', 'spinner']" spin /> Running...
-                    </div>
-                </div>
-                <div v-else-if="buildInfo.log.length === 0" class="loader_log">
-                    <div class="text_holder">
-                        <font-awesome-icon :icon="['fas', 'ghost']" /> No Logs
-                    </div>
-                </div>
-            </code>
-            <aside class="build_info_card">
-                <h3>{{ buildInfo.name }}</h3>
-                <div><b>Status:</b> <Tag :type="buildInfo.status" :value="buildInfo.status" /></div>
-                <div><b>Duration:</b> {{ formatSeconds(buildInfo.duration) }}</div>
-                <div><b>Started Date:</b> {{ unixTimestampToFormattedString(buildInfo.created_at) }}</div>
-            </aside>
+  <div
+    v-if="!buildInfo.name"
+    class="loader"
+  >
+    <font-awesome-icon
+      :icon="['fas', 'spinner']"
+      spin
+    />
+  </div>
+  <div v-else>
+    <div class="build_info">
+      <code :ref="buildInfo.name">
+        <div
+          v-for="(line, index) in buildInfo.log"
+          :key="index"
+        >
+          <div class="line_number">{{ index + 1 }}</div>
+          <div class="text_holder">{{ line }}</div>
         </div>
+        <div
+          v-if="buildInfo.status === 'running'"
+          class="loader_log"
+        >
+          <div class="text_holder">
+            <font-awesome-icon
+              :icon="['fas', 'spinner']"
+              spin
+            /> Running...
+          </div>
+        </div>
+        <div
+          v-else-if="buildInfo.log.length === 0"
+          class="loader_log"
+        >
+          <div class="text_holder">
+            <font-awesome-icon :icon="['fas', 'ghost']" /> No Logs
+          </div>
+        </div>
+      </code>
+      <aside class="build_info_card">
+        <h3>{{ buildInfo.name }}</h3>
+        <div>
+          <b>Status:</b> <VTag
+            :type="buildInfo.status"
+            :value="buildInfo.status"
+          />
+        </div>
+        <div><b>Duration:</b> {{ formatSeconds(buildInfo.duration) }}</div>
+        <div><b>Started Date:</b> {{ unixTimestampToFormattedString(buildInfo.created_at) }}</div>
+      </aside>
     </div>
-    
+  </div>
 </template> 
 
 <script>
-import Table from '../../components/Table.vue';
-import Button from '../../components/Button.vue';
-import ButtonSet from '../../components/ButtonSet.vue';
-import Tag from '../../components/Tag.vue';
-import Column from '../../components/Column.vue';
-import TabView from '../../components/TabView.vue';
-import Tab from '../../components/Tab.vue';
+import VTag from '../../components/VTag.vue';
 import { useNotifyStore } from '../../stores/notifications'
 
 export default {
     components: {
-        Table,
-        Button,
-        ButtonSet,
-        Tag,
-        Column,
-        TabView,
-        Tab
+        VTag
     },
     data() {
         return {
@@ -69,6 +79,13 @@ export default {
                 skipped: ['fas', 'slash'],
             }
         }
+    },
+    async created() {
+        await this.loadData()
+        await this.refreshRunningBuild()
+    },
+    unmounted() {
+        clearInterval(this.interval)
     },
     methods: {
         async loadData() {
@@ -105,17 +122,10 @@ export default {
             }
         },
     },
-    async created() {
-        await this.loadData()
-        await this.refreshRunningBuild()
-    },
-    unmounted() {
-        clearInterval(this.interval)
-    },
 }
 </script>
 
-<style scoped>
+<style>
 .stages_holder {
     display: flex;
     justify-content: center;

@@ -1,55 +1,120 @@
 <template>
   <div>
-    <Table :tableData="tableData" :showRowIndex="true" :isLoading="isLoading">
-      <Column header="Name" value="name" />
-      <Column header="Description" value="description" />
-      <Column header="Created Date" value="created_ts" />
+    <VTable
+      :table-data="tableData"
+      :show-row-index="true"
+      :is-loading="isLoading"
+    >
+      <VColumn
+        header="Name"
+        value="name"
+      />
+      <VColumn
+        header="Description"
+        value="description"
+      />
+      <VColumn
+        header="Created Date"
+        value="created_ts"
+      />
       <template #actions="item">
-      <Column header="Actions" value="actions">
-        <ButtonSet>
-          <Button :icon="['fas', 'eye']" :linkTo="{name: 'SingleRole', params: { roleId: item.item.id } }" tooltipText="View" tooltipPos="Top"/>
-          <Button :icon="['fas', 'pen-to-square']" @onClick="showEditModal(item.item)" tooltipText="Edit"/>
-          <Button :icon="['fas', 'trash']" @onClick="requiredConfirmation(() => deleteData(item.item))" :isLoading="isBtnLoading" tooltipText="Remove"/>
-        </ButtonSet>
-      </Column>
+        <VColumn
+          header="Actions"
+          value="actions"
+        >
+          <VButtonSet>
+            <VButton
+              :icon="['fas', 'eye']"
+              :link-to="{name: 'SingleRole', params: { roleId: item.item.id } }"
+              tooltip-text="View"
+              tooltip-pos="Top"
+            />
+            <VButton
+              :icon="['fas', 'pen-to-square']"
+              tooltip-text="Edit"
+              @on-click="showEditModal(item.item)"
+            />
+            <VButton
+              :icon="['fas', 'trash']"
+              :is-loading="isBtnLoading"
+              tooltip-text="Remove"
+              @on-click="requiredConfirmation(() => deleteData(item.item))"
+            />
+          </VButtonSet>
+        </VColumn>
       </template>
-    </Table>
-    <Button :icon="['fas', 'plus']" @onClick="showAddModal">Add New</Button>
+    </VTable>
+    <VButton
+      :icon="['fas', 'plus']"
+      @on-click="showAddModal"
+    >
+      Add New
+    </VButton>
   
-    <Modal v-model:isActive="isAddModalVissible" >
-      <TextInput name="name" placeholder="Name" tooltipText="Name of the access role." tooltipPos="left" :icon="['fas', 'fa-user-tag']" v-model:data="formData.name" />
-      <TextInput name="description" placeholder="Description" :icon="['fas', 'fa-user-tag']" v-model:data="formData.description" />
-      <Button :icon="['fas', 'plus']" @onClick="addData" :isLoading="isBtnLoading">Add</Button>
-    </Modal>
-    <Modal v-model:isActive="isEditModalVissible" >
-      <TextInput name="name" placeholder="Name" :icon="['fas', 'fa-user-tag']" v-model:data="formData.name" />
-      <TextInput name="description" placeholder="Description" :icon="['fas', 'fa-user-tag']" v-model:data="formData.description" />
-      <Button :icon="['fas', 'floppy-disk']" @onClick="updateData" :isLoading="isBtnLoading">Save</Button>
-    </Modal>
+    <VModal v-model:isActive="isAddModalVissible">
+      <VTextInput
+        v-model:data="formData.name"
+        name="name"
+        placeholder="Name"
+        tooltip-text="Name of the access role."
+        tooltip-pos="left"
+        :icon="['fas', 'fa-user-tag']"
+      />
+      <VTextInput
+        v-model:data="formData.description"
+        name="description"
+        placeholder="Description"
+        :icon="['fas', 'fa-user-tag']"
+      />
+      <VButton
+        :icon="['fas', 'plus']"
+        :is-loading="isBtnLoading"
+        @on-click="addData"
+      >
+        Add
+      </VButton>
+    </VModal>
+    <VModal v-model:isActive="isEditModalVissible">
+      <VTextInput
+        v-model:data="formData.name"
+        name="name"
+        placeholder="Name"
+        :icon="['fas', 'fa-user-tag']"
+      />
+      <VTextInput
+        v-model:data="formData.description"
+        name="description"
+        placeholder="Description"
+        :icon="['fas', 'fa-user-tag']"
+      />
+      <VButton
+        :icon="['fas', 'floppy-disk']"
+        :is-loading="isBtnLoading"
+        @on-click="updateData"
+      >
+        Save
+      </VButton>
+    </VModal>
   </div>
 </template> 
 
 <script>
-import Table from '../components/Table.vue';
-import Button from '../components/Button.vue';
-import ButtonSet from '../components/ButtonSet.vue';
-import Modal from '../components/Modal.vue';
-import TextInput from '../components/Form/TextInput.vue';
-import Dropdown from '../components/Form/Dropdown.vue';
-import Tag from '../components/Tag.vue';
-import Column from '../components/Column.vue';
+import VTable from '../components/VTable.vue';
+import VButton from '../components/VButton.vue';
+import VButtonSet from '../components/VButtonSet.vue';
+import VModal from '../components/VModal.vue';
+import VTextInput from '../components/Form/VTextInput.vue';
+import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications'
 
 export default {
   components: {
-    Table,
-    Button,
-    ButtonSet,
-    Modal,
-    TextInput,
-    Dropdown,
-    Tag,
-    Column
+    VTable,
+    VButton,
+    VButtonSet,
+    VModal,
+    VTextInput,
+    VColumn
   },
   data() {
     return {

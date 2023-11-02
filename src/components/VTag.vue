@@ -1,11 +1,10 @@
 <template>
-<span :class="`tag ` + type">{{ value }}</span>
+  <span :class="`tag ` + type">{{ value }}</span>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 
-export default defineComponent({
+export default {
   props: {
     value: {
       type: String,
@@ -16,11 +15,11 @@ export default defineComponent({
       default: '',
     }
   },
-});
+};
 </script>
 
 
-<style scoped>
+<style>
 .tag {
   padding: 3px 10px;
   color: white;

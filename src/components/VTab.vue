@@ -1,13 +1,11 @@
 <template>
   <div :class="tab-holder">
-    <slot></slot>
+    <slot />
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
-
-export default defineComponent({
+<script>
+export default {
   props: {
     header: {
       type: String,
@@ -16,10 +14,10 @@ export default defineComponent({
     },
     icons: {
       type: Array,
-      default: []
+      default: () => []
     }
   }
-});
+};
 </script>
 
 

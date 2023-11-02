@@ -1,28 +1,39 @@
 <template>
-    <aside class="aside_menu">
-        <ul>
-            <template v-for="route in asideMenuRoutes" :key="route">
-                <li v-if="route.requiredAccessLevel.includes(userInfo.accessLevel)">
-                    <router-link v-if="route.label !== 'Logout'" :to="route.path" :class="{ 'active': $route.path.startsWith(route.path) }">
-                        <font-awesome-icon :icon="route.icon" />
-                        <span>{{ route.label }}</span>
-                    </router-link>
-                    <router-link v-else @click="logout" :to="route.path" :class="{ 'active': $route.path.startsWith(route.path) }">
-                        <font-awesome-icon :icon="route.icon" />
-                        <span>{{ route.label }}</span>
-                    </router-link>
-                </li>
-            </template>
-        </ul>
-    </aside>
+  <aside class="aside_menu">
+    <ul>
+      <template
+        v-for="route in asideMenuRoutes"
+        :key="route"
+      >
+        <li v-if="route.requiredAccessLevel.includes(userInfo.accessLevel)">
+          <router-link
+            v-if="route.label !== 'Logout'"
+            :to="route.path"
+            :class="{ 'active': $route.path.startsWith(route.path) }"
+          >
+            <font-awesome-icon :icon="route.icon" />
+            <span>{{ route.label }}</span>
+          </router-link>
+          <router-link
+            v-else
+            :to="route.path"
+            :class="{ 'active': $route.path.startsWith(route.path) }"
+            @click="logout"
+          >
+            <font-awesome-icon :icon="route.icon" />
+            <span>{{ route.label }}</span>
+          </router-link>
+        </li>
+      </template>
+    </ul>
+  </aside>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script>
 import { useNotifyStore } from '../stores/notifications'
 import { useUserStore } from '../stores/user'
 
-export default defineComponent({
+export default {
   props: {},
   data() {
     return {
@@ -71,10 +82,7 @@ export default defineComponent({
   methods: {
     async logout(){
         try {
-            const response = await this.axios({
-                method: "post",
-                url: `${this.backendUrl}/logout`
-            });
+            await this.axios({method: "post", url: `${this.backendUrl}/logout`});
 
             this.$router.push({path: "/login"});
         } catch (error) {
@@ -82,10 +90,10 @@ export default defineComponent({
         }
     },
   }
-});
+};
 </script>
 
-<style scoped>
+<style>
 .aside_menu {
     width: 200px;
     height: 100%;

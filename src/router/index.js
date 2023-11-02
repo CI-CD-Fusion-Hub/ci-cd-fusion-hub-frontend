@@ -1,21 +1,21 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Login from "../views/Login.vue";
-import Pipelines from "../views/Pipelines.vue";
-import SinglePipeline from "../views/SinglePipeline/Main.vue"
+import Login from "../views/LoginPage.vue";
+import Pipelines from "../views/AllPipelines.vue";
+import SinglePipeline from "../views/SinglePipeline/SinglePipeline.vue"
 import SingleBuildGit from "../views/SinglePipeline/SingleBuildGit.vue"
 import SingleBuildJenkins from "../views/SinglePipeline/SingleBuildJenkins.vue"
-import AccessRoles from "../views/AccessRoles.vue";
-import SingleRole from "../views/SingleRole/Main.vue"
-import Users from "../views/Users.vue";
-import SingleUser from "../views/SingleUser/Main.vue"
-import Applications from "../views/Applications.vue";
-import Settings from "../views/Settings.vue";
+import AccessRoles from "../views/AllAccessRoles.vue";
+import SingleRole from "../views/SingleRole/SingleRole.vue"
+import Users from "../views/AllUsers.vue";
+import SingleUser from "../views/SingleUser/SingleUser.vue"
+import Applications from "../views/AllApplications.vue";
+import Settings from "../views/AllSettings.vue";
 
 
 const routes = [
   { path: "/login", component: Login },
   {path: "/",
-    redirect: to => {
+    redirect: () => {
       return {path: `/pipelines`}
     }
   },

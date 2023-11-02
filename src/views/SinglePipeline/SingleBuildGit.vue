@@ -1,70 +1,104 @@
 <template>
-    <div class="loader" v-if="!buildInfo.stages">
-        <font-awesome-icon :icon="['fas', 'spinner']" spin />
-    </div>
-    <div v-else>
-        <nav class="stages_holder">
-            <div v-for="stage in buildInfo.stages" :key="stage" :class="`stage`">
-                <Button :icon="stageIcons[stage.status]" :isLoading="stage.status === 'running' ? true : false" :class="stage.status" @onClick="changeStage(stage.name)" :isActive="isStageActive(stage.name)"/>
-                <div class="stage_label">{{ stage.name }}</div>
+  <div
+    v-if="!buildInfo.stages"
+    class="loader"
+  >
+    <font-awesome-icon
+      :icon="['fas', 'spinner']"
+      spin
+    />
+  </div>
+  <div v-else>
+    <nav class="stages_holder">
+      <div
+        v-for="stage in buildInfo.stages"
+        :key="stage"
+        :class="`stage`"
+      >
+        <VButton
+          :icon="stageIcons[stage.status]"
+          :is-loading="stage.status === 'running' ? true : false"
+          :class="stage.status"
+          :is-active="isStageActive(stage.name)"
+          @on-click="changeStage(stage.name)"
+        />
+        <div class="stage_label">
+          {{ stage.name }}
+        </div>
+      </div>
+    </nav>
+    <template
+      v-for="stage in buildInfo.stages"
+      :key="stage.name"
+    >
+      <div
+        v-if="isStageActive(stage.name)"
+        class="build_info"
+      >
+        <code :ref="stage.name">
+          <template v-if="stage.id in stage_logs">
+            <div
+              v-for="(line, index) in stage_logs[stage.id].log"
+              :key="index"
+            >
+              <div class="line_number">{{ index + 1 }}</div>
+              <div class="text_holder">{{ line }}</div>
             </div>
-        </nav>
-        <template v-for="stage in buildInfo.stages" :key="stage.name" >
-            <div v-if="isStageActive(stage.name)" class="build_info">
-                <code :ref="stage.name">
-                    <template v-if="stage.id in stage_logs">
-                        <div v-for="(line, index) in stage_logs[stage.id].log" :key="index">
-                            <div class="line_number">{{ index + 1 }}</div>
-                            <div class="text_holder">{{ line }}</div>
-                        </div>
-                        <div v-if="stage.status === 'running'" class="loader_log">
-                            <div class="text_holder">
-                                <font-awesome-icon :icon="['fas', 'spinner']" spin /> Running...
-                            </div>
-                        </div>
-                        <div v-else-if="stage_logs[stage.id].log.length === 0" class="loader_log">
-                            <div class="text_holder">
-                                <font-awesome-icon :icon="['fas', 'ghost']" /> No Logs
-                            </div>
-                        </div>
-                    </template>
-                    <div class="loader" v-else>
-                        <font-awesome-icon :icon="['fas', 'spinner']" spin />
-                    </div>
-                </code>
-                <aside class="build_info_card">
-                    <h3>{{ buildInfo.name }}</h3>
-                    <div><b>Status:</b> <Tag :type="stage.status" :value="stage.status" /></div>
-                    <div><b>Stage:</b> {{ stage.name }}</div>
-                    <div><b>Duration:</b> {{ formatSeconds(stage.duration) }}</div>
-                    <div><b>Started Date:</b> {{ unixTimestampToFormattedString(buildInfo.created_at) }}</div>
-                    <div><b>Commit:</b> {{ buildInfo.commit_msg }}</div>
-                </aside>
+            <div
+              v-if="stage.status === 'running'"
+              class="loader_log"
+            >
+              <div class="text_holder">
+                <font-awesome-icon
+                  :icon="['fas', 'spinner']"
+                  spin
+                /> Running...
+              </div>
             </div>
-        </template>
-    </div>
-    
+            <div
+              v-else-if="stage_logs[stage.id].log.length === 0"
+              class="loader_log"
+            >
+              <div class="text_holder">
+                <font-awesome-icon :icon="['fas', 'ghost']" /> No Logs
+              </div>
+            </div>
+          </template>
+          <div
+            v-else
+            class="loader"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'spinner']"
+              spin
+            />
+          </div>
+        </code>
+        <aside class="build_info_card">
+          <h3>{{ buildInfo.name }}</h3>
+          <div>
+            <b>Status:</b> <VTag
+              :type="stage.status"
+              :value="stage.status"
+            />
+          </div>
+          <div><b>Stage:</b> {{ stage.name }}</div>
+          <div><b>Duration:</b> {{ formatSeconds(stage.duration) }}</div>
+          <div><b>Started Date:</b> {{ unixTimestampToFormattedString(buildInfo.created_at) }}</div>
+          <div><b>Commit:</b> {{ buildInfo.commit_msg }}</div>
+        </aside>
+      </div>
+    </template>
+  </div>
 </template> 
 
 <script>
-import Table from '../../components/Table.vue';
-import Button from '../../components/Button.vue';
-import ButtonSet from '../../components/ButtonSet.vue';
-import Tag from '../../components/Tag.vue';
-import Column from '../../components/Column.vue';
-import TabView from '../../components/TabView.vue';
-import Tab from '../../components/Tab.vue';
+import VTag from '../../components/VTag.vue';
 import { useNotifyStore } from '../../stores/notifications'
 
 export default {
     components: {
-        Table,
-        Button,
-        ButtonSet,
-        Tag,
-        Column,
-        TabView,
-        Tab
+        VTag,
     },
     data() {
         return {
@@ -87,14 +121,26 @@ export default {
     },
     computed: {
         getActiveStage(){
-            return this.$route.query.hasOwnProperty('activeStage') ? this.$route.query.activeStage : this.buildInfo.stages[0].name
+            return this.$route.query?.activeStage ? this.$route.query.activeStage : this.buildInfo.stages[0].name
         }
+    },
+    async created() {
+        await this.loadData()
+        this.activeStage = this.buildInfo.stages[0].name
+        await this.refreshRunningStage()
+        await this.refreshRunningBuild()
+    },
+    unmounted() {
+        Object.entries(this.interval).forEach((e) => {
+            clearInterval(e)
+        });
     },
     methods: {
         async loadData() {
             try {
+                console.log(this.$route.params.application)
                 const response = await this.axios.get(
-                `${this.backendUrl}/pipelines/${this.$route.params.appplication_id}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`
+                `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`
                 );
                 
                 this.buildInfo = response.data.data;
@@ -107,7 +153,7 @@ export default {
         async loadStageLog(id) {
             try {
                 const response = await this.axios.get(
-                `${this.backendUrl}/pipelines/${this.$route.params.appplication_id}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}/jobs/${id}/trace`
+                `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}/jobs/${id}/trace`
                 );
                 
                 this.stage_logs[id] = response.data.data
@@ -163,21 +209,10 @@ export default {
             }
         },
     },
-    async created() {
-        await this.loadData()
-        this.activeStage = this.buildInfo.stages[0].name
-        await this.refreshRunningStage()
-        await this.refreshRunningBuild()
-    },
-    unmounted() {
-        Object.entries(this.interval).forEach(([key, value]) => {
-            clearInterval(value)
-        });
-    },
 }
 </script>
 
-<style scoped>
+<style>
 .stages_holder {
     display: flex;
     justify-content: center;

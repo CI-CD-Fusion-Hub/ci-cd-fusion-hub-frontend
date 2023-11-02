@@ -16,10 +16,9 @@ faArrowsRotate, faStop, faTag, faQuestion
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import "./assets/css/index.css";
 import axios from "./config/axios";
-import Notification from './components/Notification.vue';
+import VNotification from './components/VNotification.vue';
 import { createPinia } from 'pinia'
 import * as sharedFunctions from './utils/sharedFunctions';
-import ConfirmationDialog from './components/Confirmation.vue';
 
 library.add(faPhone);
 library.add(faSitemap);
@@ -67,8 +66,7 @@ app
 .use(router)
 .use(pinia)
 .component("font-awesome-icon", FontAwesomeIcon)
-.component('Notification', Notification)
-.component('ConfirmationDialog', ConfirmationDialog)
+.component('VNotification', VNotification)
 
 app.config.globalProperties.axios = axios;
 app.config.globalProperties.unixTimestampToFormattedString = sharedFunctions.unixTimestampToFormattedString;

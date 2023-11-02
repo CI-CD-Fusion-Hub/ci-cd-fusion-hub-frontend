@@ -1,33 +1,47 @@
 <template>
-  <div class="modal-holder confirmation" v-if="isConfirmationVisible">
+  <div
+    v-if="isConfirmationVisible"
+    class="modal-holder confirmation"
+  >
     <div class="modal-container">
-      <div class="conf-icon"><font-awesome-icon :icon="['fas', 'fa-question']" /></div>
+      <div class="conf-icon">
+        <font-awesome-icon :icon="['fas', 'fa-question']" />
+      </div>
       <h2>Are you sure?</h2>
       <p>{{ message }}</p>
       <div>
-        <ButtonSet>
-          <Button :icon="['fas', 'check']" @onClick="confirmAction">Confirm</Button>
-          <Button :icon="['fas', 'xmark']" @onClick="cancelAction">Cancel</Button>
-        </ButtonSet>
+        <VButtonSet>
+          <VButton
+            :icon="['fas', 'check']"
+            @on-click="confirmAction"
+          >
+            Confirm
+          </VButton>
+          <VButton
+            :icon="['fas', 'xmark']"
+            @on-click="cancelAction"
+          >
+            Cancel
+          </VButton>
+        </VButtonSet>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import ButtonSet from './ButtonSet.vue';
-import Button from './Button.vue';
+<script>
+import VButtonSet from './VButtonSet.vue';
+import VButton from './VButton.vue';
 
-export default defineComponent({
-  components: { Button,ButtonSet },
+export default {
+  components: { VButton,VButtonSet },
   props: {
     message: {
       type: String,
       default: 'Please confirm to proceed.'
     }
   },
-});
+};
 </script>
 
 

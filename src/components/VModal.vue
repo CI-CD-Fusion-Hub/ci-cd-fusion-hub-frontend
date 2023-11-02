@@ -1,19 +1,28 @@
 <template>
-  <div class="modal-holder" v-if="is_visible">
+  <div
+    v-if="is_visible"
+    class="modal-holder"
+  >
     <div class="modal-container">
-      <Button :icon="['fas', 'xmark']" @onClick="close_modal" class="btn-modal-close" tooltipText="Close"/>
-      <h2 v-if="header !== ''">{{ header }}</h2>
-      <slot></slot>
+      <VButton
+        :icon="['fas', 'xmark']"
+        class="btn-modal-close"
+        tooltip-text="Close"
+        @on-click="close_modal"
+      />
+      <h2 v-if="header !== ''">
+        {{ header }}
+      </h2>
+      <slot />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Button from './Button.vue';
+<script>
+import VButton from './VButton.vue';
 
-export default defineComponent({
-  components: { Button },
+export default {
+  components: { VButton },
   props: {
     header: {
       type: String,
@@ -24,6 +33,7 @@ export default defineComponent({
       default: false
     }
   },
+  emits: ['update:isActive'],
   computed: {
     is_visible() {
       return this.isActive;
@@ -34,7 +44,7 @@ export default defineComponent({
       this.$emit('update:isActive', false);
     }
   }
-});
+};
 </script>
 
 
@@ -65,6 +75,11 @@ export default defineComponent({
   position: absolute;
   top: -15px;
   right: -15px;
+}
+
+.modal-holder .btn-modal-close:hover button{
+  background-color: red;
+  color: white;
 }
 
 .modal-holder .btn-modal-close button {
