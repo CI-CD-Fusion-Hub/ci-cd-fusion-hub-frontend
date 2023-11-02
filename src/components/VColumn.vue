@@ -10,7 +10,5 @@ export default {
 </script>
 
 <template>
-  <td>
-    <slot />
-  </td>
+  <div />
 </template>

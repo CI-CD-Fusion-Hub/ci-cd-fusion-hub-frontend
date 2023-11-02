@@ -9,12 +9,16 @@ export default {
       type: String,
       default: '',
     },
+    icon: {
+      type: Array,
+      default: () => [],
+    },
   },
 };
 </script>
 
 <template>
-  <span :class="`tag ${type}`">{{ value }}</span>
+  <span :class="`tag ${type}`"><font-awesome-icon v-if="icon.length > 0" :icon="icon" />{{ value }}</span>
 </template>
 
 <style>
@@ -53,10 +57,15 @@ export default {
 }
 .tag.inactive,
 .tag.canceled,
+.tag.cancelled,
 .tag.User,
 .tag.pending,
 .tag.skipped,
 .tag.created {
   background-color: gray;
+}
+
+.tag.cancelled {
+  text-decoration: line-through;
 }
 </style>

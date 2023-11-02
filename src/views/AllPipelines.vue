@@ -41,40 +41,26 @@ export default {
 <template>
   <div>
     <VTable
-      :table-data="tableData"
-      :show-row-index="true"
-      :is-loading="isLoading"
-      :pagination="true"
-      :page-size="20"
-      :is-searchable="true"
-      :search-in-columns="['name']"
+      :table-data="tableData" :show-row-index="true" :is-loading="isLoading" :pagination="true" :page-size="20"
+      :is-searchable="true" :search-in-columns="['name']"
     >
-      <VColumn
-        header="Name"
-        value="name"
-      />
-      <template #application="item">
-        <VColumn
-          header="Application"
-          value="application"
-        >
-          {{ item.item.application.name }}
-        </VColumn>
-      </template>
-      <template #actions="item">
-        <VColumn
-          header="Actions"
-          value="actions"
-        >
+      <VColumn header="Name" value="name" />
+      <VColumn header="Application" value="application">
+        <template #body="{ row }">
+          {{ row.application.name }}
+        </template>
+      </VColumn>
+      <VColumn header="Actions" value="actions">
+        <template #body="{ row }">
           <VButtonSet>
             <VButton
               :icon="['fas', 'eye']"
-              :link-to="{ name: 'SinglePipeline', params: { pipeline_id: item.item.id, application: item.item.application.type } }"
+              :link-to="{ name: 'SinglePipeline', params: { pipeline_id: row.id, application: row.application.type } }"
               tooltip-text="View"
             />
           </VButtonSet>
-        </VColumn>
-      </template>
+        </template>
+      </VColumn>
     </VTable>
   </div>
 </template>

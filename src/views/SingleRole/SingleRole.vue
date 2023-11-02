@@ -168,106 +168,59 @@ export default {
   <div>
     <VTabView>
       <template #Pipelines>
-        <VTab
-          header="Pipelines"
-          :icon="['fas', 'sitemap']"
-        >
+        <VTab header="Pipelines" :icon="['fas', 'sitemap']">
           <VTable
-            :table-data="role.pipelines"
-            :show-row-index="true"
-            :is-loading="isLoading"
-            :pagination="true"
+            :table-data="role.pipelines" :show-row-index="true" :is-loading="isLoading" :pagination="true"
             :page_size="20"
           >
-            <VColumn
-              header="Name"
-              value="name"
-            />
-            <VColumn
-              header="Created Date"
-              value="created_ts"
-            />
-            <template #application_id="item">
-              <VColumn
-                header="Application"
-                value="application_id"
-              >
-                {{ item.item.application.name }}
-              </VColumn>
-            </template>
-            <template #actions="item">
-              <VColumn
-                header="Actions"
-                value="actions"
-              >
+            <VColumn header="Name" value="name" />
+            <VColumn header="Created Date" value="created_ts" />
+            <VColumn header="Application" value="application_id">
+              <template #body="{ row }">
+                {{ row.application.name }}
+              </template>
+            </VColumn>
+            <VColumn header="Actions" value="actions">
+              <template #body="{ row }">
                 <VButtonSet>
                   <VButton
-                    :icon="['fas', 'trash']"
-                    :is-loading="isBtnLoading"
-                    tooltip-text="Remove"
-                    @on-click="deleteDataPipeline(item.item.id)"
+                    :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
+                    @on-click="deleteDataPipeline(row.id)"
                   />
                 </VButtonSet>
-              </VColumn>
-            </template>
+              </template>
+            </VColumn>
           </VTable>
-          <VButton
-            :icon="['fas', 'plus']"
-            @on-click="showAddPipelineModal"
-          >
+          <VButton :icon="['fas', 'plus']" @on-click="showAddPipelineModal">
             Add New
           </VButton>
         </VTab>
       </template>
       <template #Members>
-        <VTab
-          header="Members"
-          :icon="['fas', 'users']"
-        >
+        <VTab header="Members" :icon="['fas', 'users']">
           <VTable
-            :table-data="role.members"
-            :show-row-index="true"
-            :is-loading="isLoading"
-            :pagination="true"
+            :table-data="role.members" :show-row-index="true" :is-loading="isLoading" :pagination="true"
             :page_size="20"
           >
-            <VColumn
-              header="First Name"
-              value="first_name"
-            />
-            <VColumn
-              header="Last Name"
-              value="last_name"
-            />
-            <VColumn
-              header="Email"
-              value="email"
-            />
-            <template #actions="item">
-              <VColumn
-                header="Actions"
-                value="actions"
-              >
+            <VColumn header="First Name" value="first_name" />
+            <VColumn header="Last Name" value="last_name" />
+            <VColumn header="Email" value="email" />
+            <VColumn header="Actions" value="actions">
+              <template #body="{ row }">
                 <VButtonSet>
                   <VButton
-                    :icon="['fas', 'eye']"
-                    :link-to="{ name: 'SingleUser', params: { user_id: item.item.id } }"
+                    :icon="['fas', 'eye']" :link-to="{ name: 'SingleUser', params: { user_id: row.id } }"
                     tooltip-text="View"
                   />
                   <VButton
-                    :icon="['fas', 'trash']"
-                    :is-loading="isBtnLoading"
-                    tooltip-text="Remove"
-                    @on-click="requiredConfirmation(() => deleteDataUser(item.item.id))"
+                    :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
+                    @on-click="deleteDataUser(row.id)"
                   />
                 </VButtonSet>
-              </VColumn>
-            </template>
+              </template>
+            </VColumn>
           </VTable>
-          <VButton
-            :icon="['fas', 'plus']"
-            @on-click="showAddUserModal"
-          >
+          <VButton :icon="['fas', 'plus']" @on-click="showAddUserModal">
             Add New
           </VButton>
         </VTab>
@@ -276,43 +229,19 @@ export default {
 
     <VModal v-model:isActive="isAddModalPipelineVissible">
       <VDropdown
-        v-model:data="formPipelineData"
-        name="pipeline_id"
-        placeholder="Pipelines"
-        :icon="['fas', 'sitemap']"
-        :options="pipelines"
-        :is-multyselect="true"
-        option-label="name"
-        option-value="id"
-        :is-searchable="true"
+        v-model:data="formPipelineData" name="pipeline_id" placeholder="Pipelines" :icon="['fas', 'sitemap']"
+        :options="pipelines" :is-multyselect="true" option-label="name" option-value="id" :is-searchable="true"
       />
-      <VButton
-        v-if="pipelines.length > 0"
-        :icon="['fas', 'plus']"
-        :is-loading="isBtnLoading"
-        @on-click="addDataPipeline"
-      >
+      <VButton v-if="pipelines.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataPipeline">
         Add
       </VButton>
     </VModal>
     <VModal v-model:isActive="isAddModalUserVissible">
       <VDropdown
-        v-model:data="formUserData"
-        name="user_id"
-        placeholder="Users"
-        :icon="['fas', 'sitemap']"
-        :options="users"
-        :is-multyselect="true"
-        option-label="email"
-        option-value="id"
-        :is-searchable="true"
+        v-model:data="formUserData" name="user_id" placeholder="Users" :icon="['fas', 'sitemap']"
+        :options="users" :is-multyselect="true" option-label="email" option-value="id" :is-searchable="true"
       />
-      <VButton
-        v-if="users.length > 0"
-        :icon="['fas', 'plus']"
-        :is-loading="isBtnLoading"
-        @on-click="addDataUser"
-      >
+      <VButton v-if="users.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataUser">
         Add
       </VButton>
     </VModal>

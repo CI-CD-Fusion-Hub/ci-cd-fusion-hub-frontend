@@ -103,13 +103,13 @@ export default {
       this.isEditModalVissible = false;
       this.isBtnLoading = false;
     },
-    async deleteData(data) {
+    async deleteData(id) {
       try {
         this.isLoading = true;
 
         const response = await this.axios({
           method: 'delete',
-          url: `${this.backendUrl}/access_roles/${data.id}`,
+          url: `${this.backendUrl}/access_roles/${id}`,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
@@ -126,98 +126,50 @@ export default {
 
 <template>
   <div>
-    <VTable
-      :table-data="tableData"
-      :show-row-index="true"
-      :is-loading="isLoading"
-    >
-      <VColumn
-        header="Name"
-        value="name"
-      />
-      <VColumn
-        header="Description"
-        value="description"
-      />
-      <VColumn
-        header="Created Date"
-        value="created_ts"
-      />
-      <template #actions="item">
-        <VColumn
-          header="Actions"
-          value="actions"
-        >
+    <VTable :table-data="tableData" :show-row-index="true" :is-loading="isLoading">
+      <VColumn header="Name" value="name" />
+      <VColumn header="Description" value="description" />
+      <VColumn header="Created Date" value="created_ts" />
+      <VColumn header="Actions" value="actions">
+        <template #body="{ row }">
           <VButtonSet>
             <VButton
-              :icon="['fas', 'eye']"
-              :link-to="{ name: 'SingleRole', params: { roleId: item.item.id } }"
-              tooltip-text="View"
-              tooltip-pos="Top"
+              :icon="['fas', 'eye']" :link-to="{ name: 'SingleRole', params: { roleId: row.id } }"
+              tooltip-text="View" tooltip-pos="Top"
             />
+            <VButton :icon="['fas', 'pen-to-square']" tooltip-text="Edit" @on-click="showEditModal(row)" />
             <VButton
-              :icon="['fas', 'pen-to-square']"
-              tooltip-text="Edit"
-              @on-click="showEditModal(item.item)"
-            />
-            <VButton
-              :icon="['fas', 'trash']"
-              :is-loading="isBtnLoading"
-              tooltip-text="Remove"
-              @on-click="deleteData(item.item)"
+              :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
+              @on-click="deleteData(row.id)"
             />
           </VButtonSet>
-        </VColumn>
-      </template>
+        </template>
+      </VColumn>
     </VTable>
-    <VButton
-      :icon="['fas', 'plus']"
-      @on-click="showAddModal"
-    >
+    <VButton :icon="['fas', 'plus']" @on-click="showAddModal">
       Add New
     </VButton>
 
     <VModal v-model:isActive="isAddModalVissible">
       <VTextInput
-        v-model:data="formData.name"
-        name="name"
-        placeholder="Name"
-        tooltip-text="Name of the access role."
-        tooltip-pos="left"
-        :icon="['fas', 'fa-user-tag']"
+        v-model:data="formData.name" name="name" placeholder="Name" tooltip-text="Name of the access role."
+        tooltip-pos="left" :icon="['fas', 'fa-user-tag']"
       />
       <VTextInput
-        v-model:data="formData.description"
-        name="description"
-        placeholder="Description"
+        v-model:data="formData.description" name="description" placeholder="Description"
         :icon="['fas', 'fa-user-tag']"
       />
-      <VButton
-        :icon="['fas', 'plus']"
-        :is-loading="isBtnLoading"
-        @on-click="addData"
-      >
+      <VButton :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addData">
         Add
       </VButton>
     </VModal>
     <VModal v-model:isActive="isEditModalVissible">
+      <VTextInput v-model:data="formData.name" name="name" placeholder="Name" :icon="['fas', 'fa-user-tag']" />
       <VTextInput
-        v-model:data="formData.name"
-        name="name"
-        placeholder="Name"
+        v-model:data="formData.description" name="description" placeholder="Description"
         :icon="['fas', 'fa-user-tag']"
       />
-      <VTextInput
-        v-model:data="formData.description"
-        name="description"
-        placeholder="Description"
-        :icon="['fas', 'fa-user-tag']"
-      />
-      <VButton
-        :icon="['fas', 'floppy-disk']"
-        :is-loading="isBtnLoading"
-        @on-click="updateData"
-      >
+      <VButton :icon="['fas', 'floppy-disk']" :is-loading="isBtnLoading" @on-click="updateData">
         Save
       </VButton>
     </VModal>

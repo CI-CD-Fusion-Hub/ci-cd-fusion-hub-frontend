@@ -71,13 +71,18 @@ export default {
     async loadData() {
       try {
         const response = await this.axios.get(
-                `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds`,
+          `${this.backendUrl
+          }/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id
+          }/builds`,
         );
 
         this.builds = response.data.data;
       }
       catch (error) {
-        useNotifyStore().add('error', error.data.message || 'Error loading data!');
+        useNotifyStore().add(
+          'error',
+          error.data.message || 'Error loading data!',
+        );
       }
 
       this.isLoading = false;
@@ -87,7 +92,9 @@ export default {
         this.isBtnLoading = true;
 
         const response = await this.axios.get(
-                `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/params`,
+          `${this.backendUrl
+          }/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id
+          }/params`,
         );
 
         this.params = response.data.data;
@@ -99,8 +106,51 @@ export default {
         this.isBtnLoading = false;
       }
       catch (error) {
-        useNotifyStore().add('error', error.data.message || 'Error loading data!');
+        useNotifyStore().add(
+          'error',
+          error.data.message || 'Error loading data!',
+        );
       }
+    },
+    async retryPipeline(id) {
+      try {
+        const response = await this.axios({
+          method: 'post',
+          url: `${this.backendUrl
+            }/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id
+            }/builds/${id}/retry`,
+        });
+
+        useNotifyStore().add(response.data.status, response.data.message);
+      }
+      catch (error) {
+        useNotifyStore().add(
+          'error',
+          error.data.message || 'Error loading data!',
+        );
+      }
+
+      await this.loadData();
+    },
+    async stopPipeline(id) {
+      try {
+        const response = await this.axios({
+          method: 'post',
+          url: `${this.backendUrl
+            }/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id
+            }/builds/${id}/cancel`,
+        });
+
+        useNotifyStore().add(response.data.status, response.data.message);
+      }
+      catch (error) {
+        useNotifyStore().add(
+          'error',
+          error.data.message || 'Error loading data!',
+        );
+      }
+
+      await this.loadData();
     },
     async startPipeline() {
       try {
@@ -108,14 +158,19 @@ export default {
 
         const response = await this.axios({
           method: 'post',
-          url: `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds`,
+          url: `${this.backendUrl
+            }/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id
+            }/builds`,
           data: this.formData,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
-        useNotifyStore().add('error', error.data.message || 'Error loading data!');
+        useNotifyStore().add(
+          'error',
+          error.data.message || 'Error loading data!',
+        );
       }
 
       this.isModalVissible = false;
@@ -133,144 +188,78 @@ export default {
 
 <template>
   <div>
-    <VTable
-      :table-data="builds"
-      :is-loading="isLoading"
-      :pagination="true"
-      :page_size="20"
-    >
-      <VColumn
-        header="#"
-        value="id"
-      />
-      <VColumn
-        header="Commit Message"
-        value="commit_msg"
-      />
-      <template #duration="item">
-        <VColumn
-          header="Duration"
-          value="duration"
-        >
-          {{ formatSeconds(item.item.duration) }}
-        </VColumn>
-      </template>
-      <template
-        v-if="$route.params.application === 'GitLab'"
-        #stages="item"
-      >
-        <VColumn
-          header="Stages"
-          value="stages"
-        >
-          <VTag
-            v-for="stage in item.item.stages"
-            :key="stage"
-            :value="stage.name"
-            :type="stage.status"
-          />
-        </VColumn>
-      </template>
-      <template #created_at="item">
-        <VColumn
-          header="Started At"
-          value="created_at"
-        >
-          {{ unixTimestampToFormattedString(item.item.created_at) }}
-        </VColumn>
-      </template>
-      <template #status="item">
-        <VColumn
-          header="Status"
-          value="status"
-        >
-          <VTag
-            :value="item.item.status"
-            :type="item.item.status"
-          />
-        </VColumn>
-      </template>
-      <template #actions="item">
-        <VColumn
-          header="Actions"
-          value="actions"
-        >
-          <VButtonSet>
+    <VTable :table-data="builds" :is-loading="isLoading" :pagination="true" :page_size="200">
+      <VColumn header="#" value="id" />
+      <VColumn v-if="$route.params.application !== 'Jenkins'" header="Commit Message" value="commit_msg" />
+      <VColumn header="Duration" value="duration">
+        <template #body="{ row }">
+          {{ formatSeconds(row.duration) }}
+        </template>
+      </VColumn>
+      <VColumn v-if="$route.params.application !== 'Jenkins'" header="Stages" value="stages">
+        <template #body="{ row }">
+          <VTag v-for="stage in row.stages" :key="stage" :value="stage.name" :type="stage.status" />
+          <VTag v-if="row.stages.length === 0" type="cancelled" :icon="['fas', 'ghost']" tooltip-text="No Stages" />
+        </template>
+      </VColumn>
+      <VColumn header="Started At" value="created_at">
+        <template #body="{ row }">
+          {{ unixTimestampToFormattedString(row.created_at) }}
+        </template>
+      </VColumn>
+      <VColumn header="Status" value="status">
+        <template #body="{ row }">
+          <VTag :value="row.status" :type="row.status" />
+        </template>
+      </VColumn>
+      <VColumn header="Actions" value="actions">
+        <template #body="{ row }">
+          <VButtonSet v-if="!row.stages || row?.stages?.length > 0">
+            <VButton v-if="row.status !== 'running'" :icon="['fas', 'arrows-rotate']" tooltip-text="Replay" @on-click="retryPipeline(row.id)" />
+            <VButton v-if="row.status === 'running'" :icon="['fas', 'stop']" tooltip-text="Stop" @on-click="stopPipeline(row.id)" />
             <VButton
-              v-if="item.item.status !== 'running'"
-              :icon="['fas', 'arrows-rotate']"
-              tooltip-text="Replay"
+              v-if="$route.params.application === 'Jenkins'" :icon="['fas', 'eye']" :link-to="{
+                name: `SingleBuild${$route.params.application}`,
+                params: { build_id: row.id },
+              }" tooltip-text="View"
             />
             <VButton
-              v-if="item.item.status === 'running'"
-              :icon="['fas', 'stop']"
-              tooltip-text="Stop"
-            />
-            <VButton
-              v-if="$route.params.application === 'Jenkins'"
-              :icon="['fas', 'eye']"
-              :link-to="{ name: `SingleBuild${$route.params.application}`, params: { build_id: item.item.id } }"
-              tooltip-text="View"
-            />
-            <VButton
-              v-else
-              :icon="['fas', 'eye']"
-              :link-to="{ name: 'SingleBuildGit', params: { build_id: item.item.id, appplication: $route.params.application } }"
-              tooltip-text="View"
+              v-else :icon="['fas', 'eye']" :link-to="{
+                name: 'SingleBuildGit',
+                params: {
+                  build_id: row.id,
+                  appplication: $route.params.application,
+                },
+              }" tooltip-text="View"
             />
           </VButtonSet>
-        </VColumn>
-      </template>
+        </template>
+      </VColumn>
     </VTable>
-    <VButton
-      :icon="['fas', 'fa-play']"
-      :is-loading="isBtnLoading"
-      @on-click="getPipelineParams"
-    >
+    <VButton :icon="['fas', 'fa-play']" :is-loading="isBtnLoading" @on-click="getPipelineParams">
       Run Pipeline
     </VButton>
     <VModal v-model:isActive="isModalVissible">
-      <template
-        v-for="param in getAllParameters"
-        :key="param"
-      >
+      <template v-for="param in getAllParameters" :key="param">
         <VTextInput
-          v-if="param.type === 'string' || param.type === 'stringparameterdefinition'"
-          v-model:data="formData[param.key]"
-          type="text"
-          :name="param.key"
-          :placeholder="param.key"
-          :icon="['fas', 'tag']"
-          :tooltip-text="param.description"
-          tooltip-pos="left"
+          v-if="
+            param.type === 'string'
+              || param.type === 'stringparameterdefinition'
+          " v-model:data="formData[param.key]" type="text" :name="param.key" :placeholder="param.key"
+          :icon="['fas', 'tag']" :tooltip-text="param.description" tooltip-pos="left"
         />
         <VTextInput
-          v-if="param.type === 'password'"
-          v-model:data="formData[param.key]"
-          type="password"
-          :name="param.key"
-          :placeholder="param.key"
-          :icon="['fas', 'fa-key']"
-          :tooltip-text="param.description"
-          tooltip-pos="left"
+          v-if="param.type === 'password'" v-model:data="formData[param.key]" type="password" :name="param.key"
+          :placeholder="param.key" :icon="['fas', 'fa-key']" :tooltip-text="param.description" tooltip-pos="left"
         />
         <VDropdown
-          v-else-if="param.type === 'choice'"
-          v-model:data="formData[param.key]"
-          :name="param.key"
-          :placeholder="param.key"
-          :icon="['fas', 'tag']"
-          :options="param.value"
-          :tooltip-text="param.description"
+          v-else-if="param.type === 'choice'" v-model:data="formData[param.key]" :name="param.key"
+          :placeholder="param.key" :icon="['fas', 'tag']" :options="param.value" :tooltip-text="param.description"
           tooltip-pos="left"
         />
       </template>
       <VButtonSet class="flex-end">
-        <VButton
-          :icon="['fas', 'fa-play']"
-          :is-loading="isModalBtnLoading"
-          @on-click="startPipeline"
-        >
+        <VButton :icon="['fas', 'fa-play']" :is-loading="isModalBtnLoading" @on-click="startPipeline">
           Run
         </VButton>
       </VButtonSet>

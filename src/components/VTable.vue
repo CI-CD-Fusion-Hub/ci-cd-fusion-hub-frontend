@@ -1,10 +1,12 @@
 <script>
+import { h, useSlots } from 'vue';
+import VRenderColumn from './VRenderColumn.vue';
 import VButtonSet from './VButtonSet.vue';
 import VButton from './VButton.vue';
 import VTextInput from './Form/VTextInput.vue';
 
 export default {
-  components: { VButton, VButtonSet, VTextInput },
+  components: { VButton, VButtonSet, VTextInput, VRenderColumn },
   props: {
     tableData: {
       type: Array,
@@ -38,26 +40,24 @@ export default {
   data() {
     return {
       search_text: this.$route?.query.search || '',
+      slots: useSlots(),
     };
   },
   computed: {
+    get_columns() {
+      return this.slots.default().filter((obj) => {
+        if (obj.props)
+          return true;
+
+        else
+          return false;
+      });
+    },
     total_pages() {
       return Math.round(this.filtered_items.length / this.pageSize) || 1;
     },
     get_active_page() {
       return Number.parseInt(this.$route.query.page) || 1;
-    },
-    get_slots() {
-      let slots = Object.keys(this.$slots);
-
-      if (slots.includes('default')) {
-        slots = slots.filter((e) => {
-          return e !== 'default';
-        });
-        slots.unshift('default');
-      }
-
-      return slots;
     },
     get_page_items() {
       if (this.pagination)
@@ -89,6 +89,9 @@ export default {
     },
   },
   methods: {
+    vnode(el, row) {
+      return h(VRenderColumn, { ...el.props, row }, el.children);
+    },
     change_page(n) {
       if (n >= 1 && n <= this.total_pages)
         this.$router.push({ path: this.$route.path, query: Object.assign({}, this.$route.query, { page: n }) });
@@ -120,11 +123,9 @@ export default {
             <th v-if="showRowIndex" class="index_row">
               #
             </th>
-            <template v-for="slot in get_slots">
-              <th v-for="column in $slots[slot]()" :key="column.value">
-                {{ column.props ? column.props.header : '' }}
-              </th>
-            </template>
+            <th v-for="el in get_columns" :key="el.props.header">
+              {{ el.props.header }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -137,14 +138,14 @@ export default {
             <td v-if="showRowIndex" class="index_row">
               {{ (index + 1) + pageSize * (get_active_page - 1) }}
             </td>
-            <template v-for="slot in get_slots" :key="slot">
-              <template v-for="column in $slots[slot]()" :key="column.id">
-                <td v-if="!column.children && column.props.value">
-                  {{ row[column.props.value] }}
-                </td>
-                <slot :name="column.props.value" :item="row" />
+            <td v-for="el in get_columns" :key="`slot-${el.props?.header ?? ''}-${idx}`">
+              <template v-if="!el.children">
+                {{ row[el.props.value] ?? '' }}
               </template>
-            </template>
+              <template v-else-if="el.children">
+                <component :is="vnode(el, row)" />
+              </template>
+            </td>
           </tr>
         </tbody>
       </table>

@@ -112,90 +112,48 @@ export default {
   <div>
     <VTabView>
       <template #Pipelines>
-        <VTab
-          header="Pipelines"
-          :icon="['fas', 'sitemap']"
-        >
-          <VTable
-            :table-data="user.pipelines"
-            :show-row-index="true"
-            :is-loading="isLoading"
-            :pagination="true"
-          >
-            <VColumn
-              header="Name"
-              value="name"
-            />
-            <template #application_id="item">
-              <VColumn
-                header="Application"
-                value="application_id"
-              >
-                {{ item.item.application.name }}
-              </VColumn>
-            </template>
-            <template #actions="item">
-              <VColumn
-                header="Actions"
-                value="actions"
-              >
+        <VTab header="Pipelines" :icon="['fas', 'sitemap']">
+          <VTable :table-data="user.pipelines" :show-row-index="true" :is-loading="isLoading" :pagination="true">
+            <VColumn header="Name" value="name" />
+            <VColumn header="Application" value="application_id">
+              <template #body="{ row }">
+                {{ row.application.name }}
+              </template>
+            </VColumn>
+            <VColumn header="Actions" value="actions">
+              <template #body="{ row }">
                 <VButtonSet>
                   <VButton
-                    :icon="['fas', 'trash']"
-                    :is-loading="isBtnLoading"
-                    tooltip-text="Remove"
-                    @on-click="deleteDataPipeline(item.item.id)"
+                    :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
+                    @on-click="deleteDataPipeline(row.id)"
                   />
                 </VButtonSet>
-              </VColumn>
-            </template>
+              </template>
+            </VColumn>
           </VTable>
         </VTab>
       </template>
       <template #Roles>
-        <VTab
-          header="Roles"
-          :icon="['fas', 'users']"
-        >
-          <VTable
-            :table-data="user.roles"
-            :show-row-index="true"
-            :is-loading="isLoading"
-            :pagination="true"
-          >
-            <VColumn
-              header="Name"
-              value="name"
-            />
-            <VColumn
-              header="Description"
-              value="description"
-            />
-            <template #actions="item">
-              <VColumn
-                header="Actions"
-                value="actions"
-              >
+        <VTab header="Roles" :icon="['fas', 'users']">
+          <VTable :table-data="user.roles" :show-row-index="true" :is-loading="isLoading" :pagination="true">
+            <VColumn header="Name" value="name" />
+            <VColumn header="Description" value="description" />
+            <VColumn header="Actions" value="actions">
+              <template #body="{ row }">
                 <VButtonSet>
                   <VButton
-                    :icon="['fas', 'eye']"
-                    :link-to="{ name: 'SingleRole', params: { roleId: item.item.id } }"
+                    :icon="['fas', 'eye']" :link-to="{ name: 'SingleRole', params: { roleId: row.id } }"
                     tooltip-text="View"
                   />
                   <VButton
-                    :icon="['fas', 'trash']"
-                    :is-loading="isBtnLoading"
-                    tooltip-text="Remove"
-                    @on-click="deleteDataRoles(item.item.id)"
+                    :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
+                    @on-click="deleteDataRoles(row.id)"
                   />
                 </VButtonSet>
-              </VColumn>
-            </template>
+              </template>
+            </VColumn>
           </VTable>
-          <VButton
-            :icon="['fas', 'plus']"
-            @click="showAddRoleModal"
-          >
+          <VButton :icon="['fas', 'plus']" @click="showAddRoleModal">
             Add New
           </VButton>
         </VTab>
@@ -204,20 +162,10 @@ export default {
 
     <VModal v-model:isActive="isAddModalRoleVissible">
       <VDropdown
-        v-model:data="formData"
-        name="roleId"
-        placeholder="Roles"
-        :icon="['fas', 'sitemap']"
-        :options="roles"
-        option-label="name"
-        option-value="id"
-        :is-multyselect="true"
+        v-model:data="formData" name="roleId" placeholder="Roles" :icon="['fas', 'sitemap']" :options="roles"
+        option-label="name" option-value="id" :is-multyselect="true"
       />
-      <VButton
-        :icon="['fas', 'plus']"
-        :is-loading="isBtnLoading"
-        @on-click="addDataRole"
-      >
+      <VButton :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataRole">
         Add
       </VButton>
     </VModal>

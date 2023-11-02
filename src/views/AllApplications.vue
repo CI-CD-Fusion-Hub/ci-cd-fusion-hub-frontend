@@ -131,13 +131,13 @@ export default {
 
       this.isBtnVerifyLoading = false;
     },
-    async deleteData(data) {
+    async deleteData(id) {
       try {
         this.isLoading = true;
 
         const response = await this.axios({
           method: 'delete',
-          url: `${this.backendUrl}/applications/${data.id}`,
+          url: `${this.backendUrl}/applications/${id}`,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
@@ -154,188 +154,89 @@ export default {
 
 <template>
   <div>
-    <VTable
-      v-if="tableData"
-      :table-data="tableData"
-      :show-row-index="true"
-      :is-loading="isLoading"
-    >
-      <VColumn
-        header="Name"
-        value="name"
-      />
-      <VColumn
-        header="Filter By (Regex)"
-        value="regex_pattern"
-      />
-      <VColumn
-        header="Auth User"
-        value="auth_user"
-      />
-      <VColumn
-        header="API Url"
-        value="base_url"
-      />
-      <VColumn
-        header="Type"
-        value="type"
-      />
-      <VColumn
-        header="Created Date"
-        value="created_ts"
-      />
-      <template #status="item">
-        <VColumn
-          header="Status"
-          value="status"
-        >
-          <VTag
-            v-if="item.item"
-            :value="item.item.status"
-            :type="item.item.status"
-          />
-        </VColumn>
-      </template>
-      <template #actions="item">
-        <VColumn
-          header="Actions"
-          value="actions"
-        >
+    <VTable v-if="tableData" :table-data="tableData" :show-row-index="true" :is-loading="isLoading">
+      <VColumn header="Name" value="name" />
+      <VColumn header="Filter By (Regex)" value="regex_pattern" />
+      <VColumn header="Auth User" value="auth_user" />
+      <VColumn header="API Url" value="base_url" />
+      <VColumn header="Type" value="type" />
+      <VColumn header="Created Date" value="created_ts" />
+      <VColumn header="Status" value="status">
+        <template #body="{ row }">
+          <VTag :value="row.status" :type="row.status" />
+        </template>
+      </VColumn>
+      <VColumn header="Actions" value="actions">
+        <template #body="{ row }">
           <VButtonSet>
+            <VButton :icon="['fas', 'pen-to-square']" tooltip-text="Edit" @on-click="showEditModal(row)" />
             <VButton
-              :icon="['fas', 'pen-to-square']"
-              tooltip-text="Edit"
-              @on-click="showEditModal(item.item)"
-            />
-            <VButton
-              :icon="['fas', 'trash']"
-              :is-loading="isBtnLoading"
-              tooltip-text="Remove"
-              @on-click="requiredConfirmation(() => deleteData(item.item))"
+              :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
+              @on-click="deleteData(row.id)"
             />
           </VButtonSet>
-        </VColumn>
-      </template>
+        </template>
+      </VColumn>
     </VTable>
-    <VButton
-      :icon="['fas', 'plus']"
-      class="flex-end"
-      @on-click="showAddModal"
-    >
+    <VButton :icon="['fas', 'plus']" class="flex-end" @on-click="showAddModal">
       Add New
     </VButton>
 
     <VModal v-model:isActive="isAddModalVissible">
-      <VTextInput
-        v-model:data="formData.name"
-        name="name"
-        placeholder="Name"
-        :icon="['fas', 'fa-user-tag']"
-      />
+      <VTextInput v-model:data="formData.name" name="name" placeholder="Name" :icon="['fas', 'fa-user-tag']" />
       <VDropdown
-        v-model:data="formData.type"
-        name="type"
-        placeholder="Application"
-        :icon="['fas', 'flag']"
+        v-model:data="formData.type" name="type" placeholder="Application" :icon="['fas', 'flag']"
         :options="['Jenkins', 'GitLab', 'GitHub', 'AzureDevOps']"
       />
       <VTextInput
-        v-model:data="formData.regex_pattern"
-        name="regex_pattern"
-        placeholder="Filter By (Regex)"
+        v-model:data="formData.regex_pattern" name="regex_pattern" placeholder="Filter By (Regex)"
         :icon="['fas', 'fa-filter']"
       />
       <VTextInput
-        v-if="formData.type === 'Jenkins'"
-        v-model:data="formData.auth_user"
-        name="auth_user"
-        placeholder="Authentication User"
+        v-if="formData.type === 'Jenkins'" v-model:data="formData.auth_user" name="auth_user"
+        placeholder="Authentication User" :icon="['fas', 'fa-user-tag']"
+      />
+      <VTextInput
+        v-model:data="formData.auth_pass" type="auth_pass" name="auth_pass" placeholder="Token/Password"
         :icon="['fas', 'fa-user-tag']"
       />
       <VTextInput
-        v-model:data="formData.auth_pass"
-        type="auth_pass"
-        name="auth_pass"
-        placeholder="Token/Password"
-        :icon="['fas', 'fa-user-tag']"
-      />
-      <VTextInput
-        v-model:data="formData.base_url"
-        name="base_url"
-        type="url"
-        placeholder="API Url"
+        v-model:data="formData.base_url" name="base_url" type="url" placeholder="API Url"
         :icon="['fas', 'fa-user-tag']"
       />
       <VButtonSet class="flex-end">
-        <VButton
-          :icon="['fas', 'check']"
-          :is-loading="isBtnVerifyLoading"
-          @on-click="verifyData"
-        >
+        <VButton :icon="['fas', 'check']" :is-loading="isBtnVerifyLoading" @on-click="verifyData">
           Verify
         </VButton>
-        <VButton
-          :icon="['fas', 'plus']"
-          :is-loading="isBtnLoading"
-          @on-click="addData"
-        >
+        <VButton :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addData">
           Add
         </VButton>
       </VButtonSet>
     </VModal>
     <VModal v-model:isActive="isEditModalVissible">
+      <VTextInput v-model:data="formData.name" name="name" placeholder="Name" :icon="['fas', 'fa-user-tag']" />
       <VTextInput
-        v-model:data="formData.name"
-        name="name"
-        placeholder="Name"
-        :icon="['fas', 'fa-user-tag']"
-      />
-      <VTextInput
-        v-model:data="formData.regex_pattern"
-        name="regex_pattern"
-        placeholder="Filter By (Regex)"
+        v-model:data="formData.regex_pattern" name="regex_pattern" placeholder="Filter By (Regex)"
         :icon="['fas', 'fa-filter']"
       />
       <VTextInput
-        v-if="formData.type === 'jenkins'"
-        v-model:data="formData.auth_user"
-        name="auth_user"
-        placeholder="Authentication User"
-        :icon="['fas', 'fa-user-tag']"
+        v-if="formData.type === 'jenkins'" v-model:data="formData.auth_user" name="auth_user"
+        placeholder="Authentication User" :icon="['fas', 'fa-user-tag']"
       />
       <VTextInput
-        v-model:data="formData.auth_pass"
-        type="auth_pass"
-        name="auth_pass"
-        placeholder="Token/Password"
+        v-model:data="formData.auth_pass" type="auth_pass" name="auth_pass" placeholder="Token/Password"
         :icon="['fas', 'fa-user-tag']"
       />
-      <VTextInput
-        v-model:data="formData.base_url"
-        name="base_url"
-        placeholder="API Url"
-        :icon="['fas', 'fa-user-tag']"
-      />
+      <VTextInput v-model:data="formData.base_url" name="base_url" placeholder="API Url" :icon="['fas', 'fa-user-tag']" />
       <VDropdown
-        v-model:data="formData.status"
-        name="status"
-        placeholder="Status"
-        :icon="['fas', 'flag']"
+        v-model:data="formData.status" name="status" placeholder="Status" :icon="['fas', 'flag']"
         :options="['active', 'inactive']"
       />
       <VButtonSet class="flex-end">
-        <VButton
-          :icon="['fas', 'check']"
-          :is-loading="isBtnVerifyLoading"
-          @on-click="verifyData"
-        >
+        <VButton :icon="['fas', 'check']" :is-loading="isBtnVerifyLoading" @on-click="verifyData">
           Verify
         </VButton>
-        <VButton
-          :icon="['fas', 'save']"
-          :is-loading="isBtnLoading"
-          @on-click="updateData"
-        >
+        <VButton :icon="['fas', 'save']" :is-loading="isBtnLoading" @on-click="updateData">
           Save
         </VButton>
       </VButtonSet>
