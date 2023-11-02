@@ -1,23 +1,50 @@
-import { createApp } from "vue";
-import App from "./App.vue";
-import router from "./router";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { 
-faPhone, faSitemap, 
-faShieldHalved, faUsers, 
-faGear, faArrowRightFromBracket,
-faRocket, faSpinner, faPlus, faUserTag, faAt, faKey, 
-faChevronDown, faFlag, faFloppyDisk, faPenToSquare, 
-faTrash, faEye, faCheck, faGhost, faXmark, faChevronLeft, 
-faChevronRight, faMagnifyingGlass, faSquare, faSquareCheck,
-faRightToBracket, faPlay, faFilter, faPause, faBan, faSlash,
-faArrowsRotate, faStop, faTag, faQuestion
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import "./assets/css/index.css";
-import axios from "./config/axios";
+import { createApp } from 'vue';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {
+  faArrowRightFromBracket,
+  faArrowsRotate,
+  faAt,
+  faBan,
+  faCheck,
+  faChevronDown,
+  faChevronLeft,
+  faChevronRight,
+  faEye,
+  faFilter,
+  faFlag,
+  faFloppyDisk,
+  faGear,
+  faGhost,
+  faKey,
+  faMagnifyingGlass,
+  faPause,
+  faPenToSquare,
+  faPhone,
+  faPlay,
+  faPlus,
+  faQuestion,
+  faRightToBracket,
+  faRocket,
+  faShieldHalved,
+  faSitemap,
+  faSlash,
+  faSpinner,
+  faSquare,
+  faSquareCheck,
+  faStop,
+  faTag,
+  faTrash,
+  faUserTag,
+  faUsers,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+import router from './router';
+import './assets/css/index.css';
+import axios from './config/axios';
 import VNotification from './components/VNotification.vue';
-import { createPinia } from 'pinia'
 import * as sharedFunctions from './utils/sharedFunctions';
 
 library.add(faPhone);
@@ -59,18 +86,17 @@ library.add(faQuestion);
 
 axios.defaults.withCredentials = true;
 
-const pinia = createPinia()
+const pinia = createPinia();
 const app = createApp(App);
 
 app
-.use(router)
-.use(pinia)
-.component("font-awesome-icon", FontAwesomeIcon)
-.component('VNotification', VNotification)
+  .use(router)
+  .use(pinia)
+  .component('font-awesome-icon', FontAwesomeIcon)
+  .component('VNotification', VNotification);
 
 app.config.globalProperties.axios = axios;
 app.config.globalProperties.unixTimestampToFormattedString = sharedFunctions.unixTimestampToFormattedString;
 app.config.globalProperties.formatSeconds = sharedFunctions.formatSeconds;
-app.config.globalProperties.requiredConfirmation = sharedFunctions.requiredConfirmation;
 
-app.mount("#app");
+app.mount('#app');

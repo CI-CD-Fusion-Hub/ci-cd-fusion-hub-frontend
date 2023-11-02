@@ -1,3 +1,121 @@
+<script>
+import VTag from '../../components/VTag.vue';
+import { useNotifyStore } from '../../stores/notifications';
+
+export default {
+  components: {
+    VTag,
+  },
+  data() {
+    return {
+      isLoading: true,
+      stage_logs: {},
+      buildInfo: {},
+      interval: {},
+      activeStage: undefined,
+      backendUrl: import.meta.env.VITE_backendUrl,
+      stageIcons: {
+        success: ['fas', 'check'],
+        failed: ['fas', 'xmark'],
+        running: ['fas', 'spinner'],
+        created: ['fas', 'pause'],
+        pending: ['fas', 'pause'],
+        canceled: ['fas', 'ban'],
+        skipped: ['fas', 'slash'],
+      },
+    };
+  },
+  computed: {
+    getActiveStage() {
+      return this.$route.query?.activeStage ? this.$route.query.activeStage : this.buildInfo.stages[0].name;
+    },
+  },
+  async created() {
+    await this.loadData();
+    this.activeStage = this.buildInfo.stages[0].name;
+    await this.refreshRunningStage();
+    await this.refreshRunningBuild();
+  },
+  unmounted() {
+    Object.entries(this.interval).forEach((e) => {
+      clearInterval(e);
+    });
+  },
+  methods: {
+    async loadData() {
+      try {
+        console.log(this.$route.params.application);
+        const response = await this.axios.get(
+                `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`,
+        );
+
+        this.buildInfo = response.data.data;
+      }
+      catch (error) {
+        useNotifyStore().add('error', 'Error loading data!');
+      }
+
+      this.isLoading = false;
+    },
+    async loadStageLog(id) {
+      try {
+        const response = await this.axios.get(
+                `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}/jobs/${id}/trace`,
+        );
+
+        this.stage_logs[id] = response.data.data;
+        this.scrollToBottom();
+        console.log(response.data.data.status);
+        if (response.data.data.status !== 'running' && response.data.data.status !== 'created' && id in this.interval) {
+          console.log(`Clear Interval: ${response.data.data.name}`);
+          clearInterval(this.interval[id]);
+        }
+      }
+      catch (error) {
+        useNotifyStore().add('error', 'Error loading data!');
+      }
+    },
+    async refreshRunningStage() {
+      this.buildInfo.stages.forEach(async (e) => {
+        if (Object.keys(this.interval).length === 0)
+          await this.loadStageLog(e.id);
+
+        if ((e.status === 'created' || e.status === 'running') && !(e.id in this.interval)) {
+          console.log(`Start Interval: ${e.name}`);
+          this.interval[e.id] = setInterval(async () => {
+            await this.loadStageLog(e.id);
+          }, 3000);
+        }
+      });
+    },
+    async refreshRunningBuild() {
+      if (this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created')
+        return;
+
+      this.interval[this.buildInfo.id] = setInterval(async () => {
+        await this.loadData();
+
+        if (this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created')
+          clearInterval(this.interval[this.buildInfo.id]);
+      }, 5000);
+    },
+    changeStage(id) {
+      this.activeStage = id;
+
+      this.$router.push({ path: this.$route.path, query: { activeStage: id } });
+      this.scrollToBottom();
+    },
+    isStageActive(stage) {
+      return stage === this.getActiveStage;
+    },
+    scrollToBottom() {
+      if (this.$refs[this.getActiveStage])
+        this.$refs[this.getActiveStage][0].scrollTop = this.$refs[this.getActiveStage][0].scrollHeight;
+    },
+  },
+};
+</script>
+
 <template>
   <div
     v-if="!buildInfo.stages"
@@ -13,7 +131,7 @@
       <div
         v-for="stage in buildInfo.stages"
         :key="stage"
-        :class="`stage`"
+        class="stage"
       >
         <VButton
           :icon="stageIcons[stage.status]"
@@ -90,127 +208,7 @@
       </div>
     </template>
   </div>
-</template> 
-
-<script>
-import VTag from '../../components/VTag.vue';
-import { useNotifyStore } from '../../stores/notifications'
-
-export default {
-    components: {
-        VTag,
-    },
-    data() {
-        return {
-            isLoading: true,
-            stage_logs: {},
-            buildInfo: {},
-            interval: {},
-            activeStage: undefined,
-            backendUrl: import.meta.env.VITE_backendUrl,
-            stageIcons: {
-                success: ['fas', 'check'],
-                failed: ['fas', 'xmark'],
-                running: ['fas', 'spinner'],
-                created: ['fas', 'pause'],
-                pending: ['fas', 'pause'],
-                canceled: ['fas', 'ban'],
-                skipped: ['fas', 'slash'],
-            }
-        }
-    },
-    computed: {
-        getActiveStage(){
-            return this.$route.query?.activeStage ? this.$route.query.activeStage : this.buildInfo.stages[0].name
-        }
-    },
-    async created() {
-        await this.loadData()
-        this.activeStage = this.buildInfo.stages[0].name
-        await this.refreshRunningStage()
-        await this.refreshRunningBuild()
-    },
-    unmounted() {
-        Object.entries(this.interval).forEach((e) => {
-            clearInterval(e)
-        });
-    },
-    methods: {
-        async loadData() {
-            try {
-                console.log(this.$route.params.application)
-                const response = await this.axios.get(
-                `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`
-                );
-                
-                this.buildInfo = response.data.data;
-            } catch (error) {
-                useNotifyStore().add('error', 'Error loading data!');
-            }
-
-            this.isLoading = false
-        },
-        async loadStageLog(id) {
-            try {
-                const response = await this.axios.get(
-                `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}/jobs/${id}/trace`
-                );
-                
-                this.stage_logs[id] = response.data.data
-                this.scrollToBottom()
-                console.log(response.data.data.status)
-                if (response.data.data.status !== 'running' && response.data.data.status !== 'created' && id in this.interval){
-                    console.log("Clear Interval: " + response.data.data.name)
-                    clearInterval(this.interval[id])
-                }
-            } catch (error) {
-                useNotifyStore().add('error', 'Error loading data!');
-            }
-        },
-        async refreshRunningStage(){
-            this.buildInfo.stages.forEach(async(e) => {
-                if(Object.keys(this.interval).length === 0){
-                    await this.loadStageLog(e.id)
-                }
-
-                if ((e.status === 'created' || e.status === 'running') && !(e.id in this.interval)) {
-                    console.log("Start Interval: " + e.name)
-                    this.interval[e.id] = setInterval(async () => {
-                        await this.loadStageLog(e.id)
-                    }, 3000);
-                }
-            });
-        },
-        async refreshRunningBuild(){
-            if(this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created'){
-                return
-            }
-
-            this.interval[this.buildInfo.id] = setInterval(async () => {
-                await this.loadData()
-
-                if(this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created'){
-                    clearInterval(this.interval[this.buildInfo.id])
-                }
-            }, 5000);
-        },
-        changeStage(id){
-            this.activeStage = id
-
-            this.$router.push({ path: this.$route.path, query: {activeStage: id} });
-            this.scrollToBottom()
-        },
-        isStageActive(stage) {
-            return stage === this.getActiveStage ? true : false
-        },
-        scrollToBottom() {
-            if (this.$refs[this.getActiveStage]) {
-                this.$refs[this.getActiveStage][0].scrollTop = this.$refs[this.getActiveStage][0].scrollHeight;
-            }
-        },
-    },
-}
-</script>
+</template>
 
 <style>
 .stages_holder {

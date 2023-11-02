@@ -1,16 +1,13 @@
-
 <script>
 import VAsideMenu from './components/VAsideMenu.vue';
-import { useUserStore } from './stores/user'
+import { useUserStore } from './stores/user';
 
-export default{
+export default {
   components: { VAsideMenu },
   created() {
-    const userInfo = useUserStore()
-    if (!window.location.href.includes('/login') && !window.location.href.includes('/logout')){
-      userInfo.loadData()
-    }
-    
+    const userInfo = useUserStore();
+    if (!window.location.href.includes('/login') && !window.location.href.includes('/logout'))
+      userInfo.loadData();
   },
 };
 </script>

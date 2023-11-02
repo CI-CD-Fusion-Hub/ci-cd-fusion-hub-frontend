@@ -1,25 +1,3 @@
-<template>
-  <div
-    class="input-holder"
-    :tooltip-text="tooltipText"
-    :tooltip-position="tooltipPos"
-  >
-    <input
-      :id="name"
-      :type="type"
-      :name="name"
-      placeholder=""
-      :value="data"
-      @input="$emit('update:data', $event.target.value)"
-    >
-    <label :for="name">{{ placeholder }}</label>
-    <font-awesome-icon
-      v-if="icon"
-      :icon="icon"
-    />
-  </div>
-</template>
-
 <script>
 export default {
   props: {
@@ -50,12 +28,33 @@ export default {
     tooltipPos: {
       type: String,
       default: 'Left',
-    }
+    },
   },
-  emits: ['update:data']
+  emits: ['update:data'],
 };
 </script>
 
+<template>
+  <div
+    class="input-holder"
+    :tooltip-text="tooltipText"
+    :tooltip-position="tooltipPos"
+  >
+    <input
+      :id="name"
+      :type="type"
+      :name="name"
+      placeholder=""
+      :value="data"
+      @input="$emit('update:data', $event.target.value)"
+    >
+    <label :for="name">{{ placeholder }}</label>
+    <font-awesome-icon
+      v-if="icon"
+      :icon="icon"
+    />
+  </div>
+</template>
 
 <style>
 .input-holder {
@@ -129,6 +128,4 @@ export default {
 .input-holder input:not(:placeholder-shown) + label + svg {
   opacity: 1;
 }
-
-
 </style>

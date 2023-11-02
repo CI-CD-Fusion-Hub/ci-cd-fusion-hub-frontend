@@ -1,13 +1,12 @@
+<script>
+export default {};
+</script>
+
 <template>
   <div class="btn-set-holder">
     <slot />
   </div>
 </template>
-
-<script>
-export default {}
-</script>
-
 
 <style>
 .btn-set-holder {

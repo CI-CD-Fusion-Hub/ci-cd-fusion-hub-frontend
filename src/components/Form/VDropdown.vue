@@ -1,3 +1,121 @@
+<script>
+import VButton from '../VButton.vue';
+
+export default {
+  component: {
+    VButton,
+  },
+  props: {
+    options: {
+      type: Array,
+      default: () => [],
+      required: true,
+    },
+    optionLabel: {
+      type: String,
+      default: null,
+    },
+    optionValue: {
+      type: String,
+      default: null,
+    },
+    name: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
+      type: String,
+      default: '',
+    },
+    data: {
+      type: Array,
+      default: () => [],
+    },
+    icon: {
+      type: Array,
+      default: () => ['fas', 'flag'],
+    },
+    isSearchable: {
+      type: Boolean,
+      default: false,
+    },
+    isMultyselect: {
+      type: Boolean,
+      default: false,
+    },
+    tooltipText: {
+      type: String,
+      default: null,
+    },
+    tooltipPos: {
+      type: String,
+      default: 'Left',
+    },
+  },
+  emits: ['update:data'],
+  data() {
+    return {
+      isOpen: false,
+      dropdownPlaceholder: this.isMultyselect ? [] : this.placeholder,
+      value: [],
+      searchValue: '',
+    };
+  },
+  computed: {
+    filterResults() {
+      if (!this.options)
+        return [];
+
+      return this.options.filter((item) => {
+        // Check if items is in already selected items
+        if (this.isMultyselect && this.optionLabel !== '')
+          return !this.value.includes(item[this.optionValue]) ? item[this.optionLabel].includes(this.searchValue) : false;
+
+        return item.includes(this.searchValue);
+      });
+    },
+  },
+  methods: {
+    toggleDropdown() {
+      this.isOpen = !this.isOpen;
+    },
+    selectValue(item) {
+      let selectedValue = '';
+      let selectedLabel = '';
+
+      if (this.optionLabel && this.optionValue) {
+        selectedValue = item[this.optionValue];
+        selectedLabel = item;
+      }
+      else {
+        selectedValue = item;
+        selectedLabel = item;
+      }
+
+      if (this.isMultyselect) {
+        this.value.push(selectedValue);
+        this.dropdownPlaceholder.push(selectedLabel);
+      }
+      else {
+        this.value = selectedValue;
+        this.dropdownPlaceholder = selectedLabel;
+        this.isOpen = false;
+      }
+
+      this.$emit('update:data', this.value);
+    },
+    removeValue(e) {
+      this.dropdownPlaceholder = this.dropdownPlaceholder.filter((item) => {
+        return item !== e;
+      });
+      this.value = this.value.filter((item) => {
+        return item !== e.id;
+      });
+    },
+  },
+};
+</script>
+
 <template>
   <div
     class="dropdown-holder"
@@ -26,13 +144,13 @@
             @click.stop="removeValue(item)"
           />
         </div>
-        <span v-if="dropdownPlaceholder.length == 0">{{ placeholder }}</span>
+        <span v-if="dropdownPlaceholder.length === 0">{{ placeholder }}</span>
       </template>
       <span v-else-if="data">{{ data }}</span>
       <span v-else>{{ dropdownPlaceholder }}</span>
       <font-awesome-icon
         :icon="['fas', 'chevron-down']"
-        :class="`is-dropdown-open-` + isOpen"
+        :class="`is-dropdown-open-${isOpen}`"
       />
     </a>
     <div :class="`is-visible-${isOpen}`">
@@ -79,124 +197,6 @@
     >
   </div>
 </template>
-
-<script>
-import VButton from '../VButton.vue'
-
-export default {
-  component: {
-    VButton
-  },
-  props: {
-    options: {
-      type: Array,
-      default: () => [],
-      required: true
-    },
-    optionLabel: {
-      type: String,
-      default: null,
-    },
-    optionValue: {
-      type: String,
-      default: null,
-    },
-    name: {
-      type: String,
-      default: '',
-    },
-    placeholder: {
-      type: String,
-      default: '',
-    },
-    data: {
-      type: Array,
-      default: () => [],
-    },
-    icon: {
-      type: Array,
-      default: () => ['fas', 'flag'],
-    },
-    isSearchable: {
-      type: Boolean,
-      default: false
-    },
-    isMultyselect: {
-      type: Boolean,
-      default: false
-    },
-    tooltipText: {
-      type: String,
-      default: null,
-    },
-    tooltipPos: {
-      type: String,
-      default: 'Left',
-    }
-  },
-  emits: ['update:data'],
-  data() {
-    return {
-      isOpen: false,
-      dropdownPlaceholder: this.isMultyselect ? [] : this.placeholder,
-      value: [],
-      searchValue: "",
-    };
-  },
-  computed: {
-    filterResults() {
-      if (!this.options) {
-        return []
-      }
-      
-      return this.options.filter((item) => {
-        // Check if items is in already selected items
-        if (this.isMultyselect && this.optionLabel !== ''){
-          return !this.value.includes(item[this.optionValue]) ? item[this.optionLabel].includes(this.searchValue) : false
-        }
-        return item.includes(this.searchValue)
-      });
-    }
-  },
-  methods: {
-    toggleDropdown(){
-      this.isOpen = !this.isOpen
-    },
-    selectValue(item) {
-      let selectedValue = '';
-      let selectedLabel = '';
-
-      if (this.optionLabel && this.optionValue){
-        selectedValue = item[this.optionValue]
-        selectedLabel = item
-      } else {
-        selectedValue = item
-        selectedLabel = item
-      }
-
-      if (this.isMultyselect) {
-        this.value.push(selectedValue)
-        this.dropdownPlaceholder.push(selectedLabel)
-      } else {
-        this.value = selectedValue
-        this.dropdownPlaceholder = selectedLabel
-        this.isOpen = false;
-      }
-      
-      this.$emit('update:data', this.value);
-    },
-    removeValue(e){
-      this.dropdownPlaceholder = this.dropdownPlaceholder.filter((item) => {
-        return item == e ? false : true
-      })
-      this.value = this.value.filter((item) => {
-        return item == e.id ? false : true
-      })
-    }
-  },
-};
-</script>
-
 
 <style>
 .dropdown-holder {

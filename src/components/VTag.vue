@@ -1,9 +1,4 @@
-<template>
-  <span :class="`tag ` + type">{{ value }}</span>
-</template>
-
 <script>
-
 export default {
   props: {
     value: {
@@ -13,11 +8,14 @@ export default {
     type: {
       type: String,
       default: '',
-    }
+    },
   },
 };
 </script>
 
+<template>
+  <span :class="`tag ${type}`">{{ value }}</span>
+</template>
 
 <style>
 .tag {

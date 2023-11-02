@@ -1,3 +1,73 @@
+<script>
+import VTag from '../../components/VTag.vue';
+import { useNotifyStore } from '../../stores/notifications';
+
+export default {
+  components: {
+    VTag,
+  },
+  data() {
+    return {
+      isLoading: true,
+      stage_logs: {},
+      buildInfo: {},
+      interval: null,
+      activeStage: null,
+      backendUrl: import.meta.env.VITE_backendUrl,
+      stageIcons: {
+        success: ['fas', 'check'],
+        failed: ['fas', 'xmark'],
+        running: ['fas', 'spinner'],
+        created: ['fas', 'pause'],
+        pending: ['fas', 'pause'],
+        canceled: ['fas', 'ban'],
+        skipped: ['fas', 'slash'],
+      },
+    };
+  },
+  async created() {
+    await this.loadData();
+    await this.refreshRunningBuild();
+  },
+  unmounted() {
+    clearInterval(this.interval);
+  },
+  methods: {
+    async loadData() {
+      try {
+        const response = await this.axios.get(
+                `${this.backendUrl}/pipelines/jenkins/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`,
+        );
+
+        this.buildInfo = response.data.data;
+        this.scrollToBottom();
+      }
+      catch (error) {
+        useNotifyStore().add('error', 'Error loading data!');
+      }
+
+      this.isLoading = false;
+    },
+    async refreshRunningBuild() {
+      if (this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created')
+        return;
+
+      this.interval = setInterval(async () => {
+        await this.loadData();
+        if (this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created')
+          clearInterval(this.interval);
+      }, 5000);
+    },
+
+    scrollToBottom() {
+      console.log(this.$refs);
+      if (this.$refs[this.buildInfo.name])
+        this.$refs[this.buildInfo.name][0].scrollTop = this.$refs[this.buildInfo.name][0].scrollHeight;
+    },
+  },
+};
+</script>
+
 <template>
   <div
     v-if="!buildInfo.name"
@@ -51,79 +121,7 @@
       </aside>
     </div>
   </div>
-</template> 
-
-<script>
-import VTag from '../../components/VTag.vue';
-import { useNotifyStore } from '../../stores/notifications'
-
-export default {
-    components: {
-        VTag
-    },
-    data() {
-        return {
-            isLoading: true,
-            stage_logs: {},
-            buildInfo: {},
-            interval: null,
-            activeStage: null,
-            backendUrl: import.meta.env.VITE_backendUrl,
-            stageIcons: {
-                success: ['fas', 'check'],
-                failed: ['fas', 'xmark'],
-                running: ['fas', 'spinner'],
-                created: ['fas', 'pause'],
-                pending: ['fas', 'pause'],
-                canceled: ['fas', 'ban'],
-                skipped: ['fas', 'slash'],
-            }
-        }
-    },
-    async created() {
-        await this.loadData()
-        await this.refreshRunningBuild()
-    },
-    unmounted() {
-        clearInterval(this.interval)
-    },
-    methods: {
-        async loadData() {
-            try {
-                const response = await this.axios.get(
-                `${this.backendUrl}/pipelines/jenkins/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`
-                );
-                
-                this.buildInfo = response.data.data;
-                this.scrollToBottom()
-            } catch (error) {
-                useNotifyStore().add('error', 'Error loading data!');
-            }
-
-            this.isLoading = false
-        },
-        async refreshRunningBuild(){
-            if(this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created'){
-                return
-            }
-
-            this.interval = setInterval(async () => {
-                await this.loadData()
-                if(this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created'){
-                    clearInterval(this.interval)
-                }
-            }, 5000);
-        },
-        
-        scrollToBottom() {
-            console.log(this.$refs)
-            if (this.$refs[this.buildInfo.name]) {
-                this.$refs[this.buildInfo.name][0].scrollTop = this.$refs[this.buildInfo.name][0].scrollHeight;
-            }
-        },
-    },
-}
-</script>
+</template>
 
 <style>
 .stages_holder {

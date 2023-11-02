@@ -1,3 +1,28 @@
+<script>
+import { useNotifyStore } from '../stores/notifications';
+import VButton from './VButton.vue';
+
+export default {
+  components: {
+    VButton,
+  },
+  data() {
+    return {
+      all_notifications: useNotifyStore().notifications,
+      status_icon: {
+        error: ['fas', 'xmark'],
+        success: ['fas', 'check'],
+      },
+    };
+  },
+  methods: {
+    remove_notification(index) {
+      this.all_notifications.pop(index);
+    },
+  },
+};
+</script>
+
 <template>
   <div>
     <div
@@ -22,31 +47,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import VButton from './VButton.vue'
-import { useNotifyStore } from '../stores/notifications'
-
-export default {
-  components: {
-    VButton,
-  },
-  data() {
-    return {
-      all_notifications: useNotifyStore().notifications,
-      status_icon: {
-        "error": ['fas', 'xmark'],
-        "success": ['fas', 'check']
-      }
-    }
-  },
-  methods: {
-    remove_notification(index){
-      this.all_notifications.pop(index)
-    }
-  }
-};
-</script>
 
 <style>
 /* Add styles for notifications */

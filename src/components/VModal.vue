@@ -1,3 +1,32 @@
+<script>
+import VButton from './VButton.vue';
+
+export default {
+  components: { VButton },
+  props: {
+    header: {
+      type: String,
+      default: '',
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:isActive'],
+  computed: {
+    is_visible() {
+      return this.isActive;
+    },
+  },
+  methods: {
+    close_modal() {
+      this.$emit('update:isActive', false);
+    },
+  },
+};
+</script>
+
 <template>
   <div
     v-if="is_visible"
@@ -17,36 +46,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import VButton from './VButton.vue';
-
-export default {
-  components: { VButton },
-  props: {
-    header: {
-      type: String,
-      default: ''
-    },
-    isActive: {
-      type: Boolean,
-      default: false
-    }
-  },
-  emits: ['update:isActive'],
-  computed: {
-    is_visible() {
-      return this.isActive;
-    }
-  },
-  methods: {
-    close_modal() {
-      this.$emit('update:isActive', false);
-    }
-  }
-};
-</script>
-
 
 <style>
 .modal-holder {

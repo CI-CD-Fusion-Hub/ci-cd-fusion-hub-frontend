@@ -1,25 +1,24 @@
-<template>
-  <div :class="tab-holder">
-    <slot />
-  </div>
-</template>
-
 <script>
 export default {
   props: {
     header: {
       type: String,
       default: '',
-      required: true
+      required: true,
     },
     icons: {
       type: Array,
-      default: () => []
-    }
-  }
+      default: () => [],
+    },
+  },
 };
 </script>
 
+<template>
+  <div :class="tab - holder">
+    <slot />
+  </div>
+</template>
 
 <style>
 .tabs {

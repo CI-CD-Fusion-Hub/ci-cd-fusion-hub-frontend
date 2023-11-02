@@ -1,5 +1,54 @@
+<script>
+export default {
+  props: {
+    icon: {
+      type: Array,
+      default: () => [],
+    },
+    data: {
+      type: String,
+      default: '',
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
+    linkTo: {
+      type: Object,
+      default: () => ({}),
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false,
+    },
+    isTooltipActive: {
+      type: Boolean,
+      default: null,
+    },
+    tooltipText: {
+      type: String,
+      default: null,
+    },
+    tooltipPos: {
+      type: String,
+      default: 'Top',
+    },
+  },
+  emits: ['onClick'],
+  methods: {
+    onClick() {
+      this.$emit('onClick');
+    },
+  },
+};
+</script>
+
 <template>
-  <div :class="`btn-holder ` + (isActive ? 'active' : '')">
+  <div :class="`btn-holder ${isActive ? 'active' : ''}`">
     <router-link
       v-if="Object.keys(linkTo).length > 0"
       :to="linkTo"
@@ -40,56 +89,6 @@
     </button>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    icon: {
-      type: Array,
-      default: () => [],
-    },
-    data: {
-      type: String,
-      default: '',
-    },
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-    linkTo: {
-      type: Object,
-      default: () => ({}),
-    },
-    isActive: {
-      type: Boolean,
-      default: false
-    },
-    isDisabled: {
-      type: Boolean,
-      default: false
-    },
-    isTooltipActive: {
-      type: Boolean,
-      default: null
-    },
-    tooltipText: {
-      type: String,
-      default: null,
-    },
-    tooltipPos: {
-      type: String,
-      default: 'Top',
-    }
-  },
-  emits: ['onClick'],
-  methods: {
-    onClick(){
-      this.$emit('onClick');
-    }
-  },
-};
-</script>
-
 
 <style>
 .btn-holder {

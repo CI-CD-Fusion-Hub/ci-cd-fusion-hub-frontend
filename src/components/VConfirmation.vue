@@ -1,3 +1,18 @@
+<script>
+import VButtonSet from './VButtonSet.vue';
+import VButton from './VButton.vue';
+
+export default {
+  components: { VButton, VButtonSet },
+  props: {
+    message: {
+      type: String,
+      default: 'Please confirm to proceed.',
+    },
+  },
+};
+</script>
+
 <template>
   <div
     v-if="isConfirmationVisible"
@@ -28,22 +43,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import VButtonSet from './VButtonSet.vue';
-import VButton from './VButton.vue';
-
-export default {
-  components: { VButton,VButtonSet },
-  props: {
-    message: {
-      type: String,
-      default: 'Please confirm to proceed.'
-    }
-  },
-};
-</script>
-
 
 <style>
 .confirmation {

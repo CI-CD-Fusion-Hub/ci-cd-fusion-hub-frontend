@@ -1,3 +1,68 @@
+<script>
+import { useNotifyStore } from '../stores/notifications';
+import { useUserStore } from '../stores/user';
+
+export default {
+  props: {},
+  data() {
+    return {
+      backendUrl: import.meta.env.VITE_backendUrl,
+      userInfo: useUserStore(),
+      asideMenuRoutes: [
+        {
+          path: '/pipelines',
+          icon: ['fas', 'sitemap'],
+          label: 'Pipelines',
+          requiredAccessLevel: ['User', 'Admin'],
+        },
+        {
+          path: '/access_roles',
+          icon: ['fas', 'shield-halved'],
+          label: 'Access Roles',
+          requiredAccessLevel: ['Admin'],
+        },
+        {
+          path: '/users',
+          icon: ['fas', 'users'],
+          label: 'Users',
+          requiredAccessLevel: ['Admin'],
+        },
+        {
+          path: '/applications',
+          icon: ['fas', 'rocket'],
+          label: 'Applications',
+          requiredAccessLevel: ['Admin'],
+        },
+        {
+          path: '/settings',
+          icon: ['fas', 'gear'],
+          label: 'Settings',
+          requiredAccessLevel: ['Admin'],
+        },
+        {
+          path: '/login',
+          icon: ['fas', 'arrow-right-from-bracket'],
+          label: 'Logout',
+          requiredAccessLevel: ['User', 'Admin'],
+        },
+      ],
+    };
+  },
+  methods: {
+    async logout() {
+      try {
+        await this.axios({ method: 'post', url: `${this.backendUrl}/logout` });
+
+        this.$router.push({ path: '/login' });
+      }
+      catch (error) {
+        useNotifyStore().add('error', 'Error loading data!');
+      }
+    },
+  },
+};
+</script>
+
 <template>
   <aside class="aside_menu">
     <ul>
@@ -9,7 +74,7 @@
           <router-link
             v-if="route.label !== 'Logout'"
             :to="route.path"
-            :class="{ 'active': $route.path.startsWith(route.path) }"
+            :class="{ active: $route.path.startsWith(route.path) }"
           >
             <font-awesome-icon :icon="route.icon" />
             <span>{{ route.label }}</span>
@@ -17,7 +82,7 @@
           <router-link
             v-else
             :to="route.path"
-            :class="{ 'active': $route.path.startsWith(route.path) }"
+            :class="{ active: $route.path.startsWith(route.path) }"
             @click="logout"
           >
             <font-awesome-icon :icon="route.icon" />
@@ -28,70 +93,6 @@
     </ul>
   </aside>
 </template>
-
-<script>
-import { useNotifyStore } from '../stores/notifications'
-import { useUserStore } from '../stores/user'
-
-export default {
-  props: {},
-  data() {
-    return {
-        backendUrl: import.meta.env.VITE_backendUrl,
-        userInfo: useUserStore(),
-        asideMenuRoutes: [
-            {
-                path: '/pipelines',
-                icon: ['fas', 'sitemap'],
-                label: 'Pipelines',
-                requiredAccessLevel: ['User', 'Admin']
-            },
-            {
-                path: '/access_roles',
-                icon: ['fas', 'shield-halved'],
-                label: 'Access Roles',
-                requiredAccessLevel: ['Admin'] 
-            },
-            {
-                path: '/users',
-                icon: ['fas', 'users'],
-                label: 'Users',
-                requiredAccessLevel: ['Admin'] 
-            },
-            {
-                path: '/applications',
-                icon: ['fas', 'rocket'],
-                label: 'Applications',
-                requiredAccessLevel: ['Admin'] 
-            },
-            {
-                path: '/settings',
-                icon: ['fas', 'gear'],
-                label: 'Settings',
-                requiredAccessLevel: ['Admin'] 
-            },
-            {
-                path: '/login',
-                icon: ['fas', 'arrow-right-from-bracket'],
-                label: 'Logout',
-                requiredAccessLevel: ['User', 'Admin'],
-            }
-        ]
-    }
-  },
-  methods: {
-    async logout(){
-        try {
-            await this.axios({method: "post", url: `${this.backendUrl}/logout`});
-
-            this.$router.push({path: "/login"});
-        } catch (error) {
-            useNotifyStore().add('error', 'Error loading data!');
-        }
-    },
-  }
-};
-</script>
 
 <style>
 .aside_menu {
