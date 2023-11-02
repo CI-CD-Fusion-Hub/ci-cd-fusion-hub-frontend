@@ -1,0 +1,228 @@
+<template>
+  <div>
+    <div class="table_search" v-if="isSearchable">
+      <TextInput name="table_search" placeholder="Search" :icon="['fas', 'magnifying-glass']" :data="search_text" @keyup.enter="filterResults($event.target.value)" />
+    </div>
+    <div>
+      <table>
+        <div class="loader" v-if="isLoading">
+          <font-awesome-icon :icon="['fas', 'spinner']" spin />
+        </div>
+        <thead>
+          <tr>
+            <th v-if="showRowIndex" class="index_row">#</th>
+            <template v-for="slot in get_slots">
+              <th v-for="column in $slots[slot]()" :key="column.value">{{ column.props ? column.props.header : '' }}</th>
+            </template>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="get_page_items.length === 0">
+            <td colspan="100" class="empty_data"><font-awesome-icon :icon="['fas', 'ghost']" /> No Data</td>
+          </tr>
+          <tr v-for="(row, index) in get_page_items" :key="row">
+            <td v-if="showRowIndex" class="index_row">{{ (index + 1) + page_size * (get_active_page - 1) }}</td>
+            <template v-for="slot in get_slots" :key="slot">
+              <template v-for="column in $slots[slot]()" :key="column.id">
+                <td v-if="!column.children && column.props.value">{{ row[column.props.value] }}</td>
+                <slot :name="column.props.value" :item="row" />
+              </template>
+            </template>
+          </tr>
+        </tbody>
+      </table>
+
+      <nav class="pagination_holder" v-if="pagination && total_pages > 1">
+        <Button :icon="['fas', 'chevron-left']" @onClick="change_page(get_active_page - 1)" tooltipText="Prev"/>
+        <ButtonSet>
+          <Button v-for="n in total_pages" :isActive="get_active_page === n ? true : false" :key="n" @onClick="change_page(n)">{{ n }}</Button>
+        </ButtonSet>
+        <Button :icon="['fas', 'chevron-right']" @onClick="change_page(get_active_page + 1)" tooltipText="Next"/>
+      </nav>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import ButtonSet from './ButtonSet.vue';
+import Button from './Button.vue';
+import TextInput from './Form/TextInput.vue';
+
+export default defineComponent({
+  components: { Button, ButtonSet, TextInput },
+  props: {
+    tableData: {
+      type: Array,
+      default: []
+    },
+    showRowIndex: {
+      type: Boolean,
+      default: false,
+    },
+    isLoading: {
+      type: Boolean,
+      default: true,
+    },
+    pagination: {
+      type: Boolean,
+      default: false,
+    },
+    page_size: {
+      type: Number,
+      default: 15,
+    },
+    isSearchable: {
+      type: Boolean,
+      default: false,
+    },
+    search_in_columns: {
+      type: Array,
+      default: [],
+    },
+  },
+  data() {
+    return {
+      search_text: this.$route.query.search || ''
+    }
+  },
+  computed: {
+    total_pages(): Number {
+      return Math.round(this.filtered_items.length / this.page_size) || 1;
+    },
+    get_active_page(): Number {
+      return parseInt(this.$route.query.page) || 1;
+    },
+    get_slots(): Object {
+      let slots = Object.keys(this.$slots);
+
+      if (slots.includes('default')) {
+        slots = slots.filter(function(e) { return e !== 'default'; });
+        slots.unshift('default');
+      }
+
+      return slots;
+    },
+    get_page_items(): Array<Object> {
+      if (this.pagination){
+        return this.filtered_items.slice((this.get_active_page - 1) * this.page_size, this.get_active_page * this.page_size);
+      }
+      return this.filtered_items
+    },
+    filtered_items(): Array<Object> {
+      if(this.isSearchable === true) {
+        return this.tableData.filter((item) => {
+          let item_match = false;
+          let search = this.search_text.toLowerCase()
+          
+          this.search_in_columns.forEach(element => {
+            if (!(element in item)){
+              console.log("Please, select valid column name that should be used for filtering.")
+              return
+            }
+
+            if (item[element].toLowerCase().includes(search)) {
+              item_match = true;
+              return
+            }
+          });
+
+          return item_match
+        })
+      }
+
+      return this.tableData
+    }
+  },
+  methods: {
+    change_page(n: Number) {
+      if (n >= 1 && n <= this.total_pages) {
+        this.$router.push({ path: this.$route.path, query: Object.assign({}, this.$route.query, { page: n }) });
+      }
+    },
+    filterResults(e: String = '') {
+      this.$router.push({ path: this.$route.path, query: this.pagination ? { search: e, page: 1 } :  { search: e}});
+
+      this.search_text = e.toLowerCase()
+    },
+  },
+});
+</script>
+
+
+<style scoped>
+.loader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-color: #b7c6e7;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  justify-content: space-evenly;
+  font-size: 20px;
+  color: white;
+  z-index: 9;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 4px #00000014;
+  font-size: 14px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 10px;
+  color: #3e4772;
+}
+
+thead {
+  border-bottom: solid 2px #b7c6e7;
+}
+
+th, td {
+  padding: 8px 15px;
+  text-align: left;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #b7c6e7;
+}
+
+table .index_row {
+  max-width: 55px;
+  width: 30px;
+  text-align: center;
+}
+
+table div.btn-holder {
+  margin-top: 0;
+}
+
+table .empty_data {
+  text-align: center;
+  font-weight: 500;
+}
+
+.pagination_holder {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.table_search + div table {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.table_search .input-holder {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+</style>
