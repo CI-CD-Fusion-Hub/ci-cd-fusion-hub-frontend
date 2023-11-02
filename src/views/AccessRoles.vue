@@ -29,8 +29,7 @@
   </div>
 </template> 
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import Table from '../components/Table.vue';
 import Button from '../components/Button.vue';
 import ButtonSet from '../components/ButtonSet.vue';
@@ -41,7 +40,7 @@ import Tag from '../components/Tag.vue';
 import Column from '../components/Column.vue';
 import { useNotifyStore } from '../stores/notifications'
 
-export default defineComponent({
+export default {
   components: {
     Table,
     Button,
@@ -91,7 +90,7 @@ export default defineComponent({
       this.clear_form()
       this.isAddModalVissible = true;
     },
-    showEditModal(data: Object){
+    showEditModal(data){
       this.clear_form()
       Object.assign(this.formData, data);
       this.isEditModalVissible = true;
@@ -136,7 +135,7 @@ export default defineComponent({
       this.isEditModalVissible = false;
       this.isBtnLoading = false;
     },
-    async deleteData(data: Object) {
+    async deleteData(data) {
       try {
         this.isLoading = true;
 
@@ -153,5 +152,5 @@ export default defineComponent({
       await this.loadData()
     }
   },
-});
+};
 </script>

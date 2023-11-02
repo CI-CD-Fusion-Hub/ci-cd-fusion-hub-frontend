@@ -31,8 +31,7 @@
     
 </template> 
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import Table from '../../components/Table.vue';
 import Button from '../../components/Button.vue';
 import ButtonSet from '../../components/ButtonSet.vue';
@@ -42,7 +41,7 @@ import TabView from '../../components/TabView.vue';
 import Tab from '../../components/Tab.vue';
 import { useNotifyStore } from '../../stores/notifications'
 
-export default defineComponent({
+export default {
     components: {
         Table,
         Button,
@@ -113,7 +112,7 @@ export default defineComponent({
     unmounted() {
         clearInterval(this.interval)
     },
-})
+}
 </script>
 
 <style scoped>

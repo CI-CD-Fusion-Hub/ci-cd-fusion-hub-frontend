@@ -10,7 +10,7 @@
         </template>
         <template #stages="item" v-if="this.$route.params.application === 'GitLab'" >
         <Column header="Stages" value="stages">
-            <Tag :value="stage.name" :type="stage.status" v-for="stage in item.item.stages" />
+            <Tag :value="stage.name" :type="stage.status" v-for="stage in item.item.stages" :key="stage"/>
         </Column>
         </template>
         <template #created_at="item">
@@ -48,8 +48,7 @@
   </div>
 </template> 
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import Table from '../../components/Table.vue';
 import Button from '../../components/Button.vue';
 import ButtonSet from '../../components/ButtonSet.vue';
@@ -60,7 +59,7 @@ import Dropdown from '../../components/Form/Dropdown.vue';
 import TextInput from '../../components/Form/TextInput.vue';
 import { useNotifyStore } from '../../stores/notifications'
 
-export default defineComponent({
+export default {
     components: {
         Table,
         Button,
@@ -172,5 +171,5 @@ export default defineComponent({
     unmounted() {
         clearInterval(this.interval)
     },
-})
+}
 </script>

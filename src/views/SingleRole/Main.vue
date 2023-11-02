@@ -55,8 +55,7 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import TabView from '../../components/TabView.vue';
 import Tab from '../../components/Tab.vue';
 import Table from '../../components/Table.vue';
@@ -67,7 +66,7 @@ import Dropdown from '../../components/Form/Dropdown.vue';
 import Column from '../../components/Column.vue';
 import { useNotifyStore } from '../../stores/notifications'
 
-export default defineComponent({
+export default {
   components: {
     Tab,
     TabView,
@@ -144,7 +143,7 @@ export default defineComponent({
       this.isBtnLoading = false;
       await this.loadData()
     },
-    async deleteDataPipeline(id: Number) {
+    async deleteDataPipeline(id) {
       try {
         this.isLoading = true;
 
@@ -195,7 +194,7 @@ export default defineComponent({
       this.isBtnLoading = false;
       await this.loadData()
     },
-    async deleteDataUser(id: Number) {
+    async deleteDataUser(id) {
       try {
         this.isLoading = true;
 
@@ -212,5 +211,5 @@ export default defineComponent({
       await this.loadData()
     }
   },
-});
+};
 </script>

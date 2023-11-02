@@ -48,8 +48,7 @@
   </div>
 </template> 
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import Table from '../components/Table.vue';
 import Button from '../components/Button.vue';
 import ButtonSet from '../components/ButtonSet.vue';
@@ -60,7 +59,7 @@ import Tag from '../components/Tag.vue';
 import Column from '../components/Column.vue';
 import { useNotifyStore } from '../stores/notifications'
 
-export default defineComponent({
+export default {
   components: {
     Table,
     Button,
@@ -80,14 +79,14 @@ export default defineComponent({
       backendUrl: import.meta.env.VITE_backendUrl,
       tableData: [],
       formData: {
-        id: null,
-        first_name: null,
-        last_name: null,
-        email: null,
-        password: null,
-        confirm_password: null,
-        status: null,
-        access_level: null,
+        id: undefined,
+        first_name: undefined,
+        last_name: undefined,
+        email: undefined,
+        password: undefined,
+        confirm_password: undefined,
+        status: undefined,
+        access_level: undefined,
       }
     };
   },
@@ -110,13 +109,13 @@ export default defineComponent({
       this.isLoading = false
     },
     clearForm(){
-      Object.keys(this.formData).forEach(key => (this.formData[key] = null));
+      Object.keys(this.formData).forEach(key => (this.formData[key] = undefined));
     },
     showAddModal(){
       this.clearForm()
       this.isAddModalVissible = true;
     },
-    showEditModal(data: Object){
+    showEditModal(data){
       this.clearForm()
       Object.assign(this.formData, data);
       this.isEditModalVissible = true;
@@ -161,13 +160,13 @@ export default defineComponent({
       this.isEditModalVissible = false;
       this.isBtnLoading = false;
     },
-    async deleteData(data: Object) {
+    async deleteData(id) {
       try {
         this.isLoading = true;
 
         const response = await this.axios({
           method: "delete",
-          url: `${this.backendUrl}/users/${data.id}`
+          url: `${this.backendUrl}/users/${id}`
         });
         
         useNotifyStore().add(response.data.status, response.data.message);
@@ -178,5 +177,5 @@ export default defineComponent({
       await this.loadData()
     }
   },
-});
+};
 </script>

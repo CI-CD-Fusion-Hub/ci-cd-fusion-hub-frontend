@@ -10,14 +10,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import TextInput from '../components/Form/TextInput.vue';
 import Button from '../components/Button.vue';
 import { useNotifyStore } from '../stores/notifications'
 import { useUserStore } from '../stores/user'
 
-export default defineComponent({
+export default {
   components: {
     TextInput,
     Button
@@ -50,12 +49,11 @@ export default defineComponent({
         this.$router.push({path: "/pipelines"});
         useNotifyStore().add(response.data.status, response.data.message);
       } catch (error) {
-        console.log(error)
         useNotifyStore().add('error', error.data.message || 'Error loading data!');
       }
     }
   },
-});
+};
 </script>
 
 <style>

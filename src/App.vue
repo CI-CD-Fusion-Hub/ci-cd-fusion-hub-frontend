@@ -1,10 +1,9 @@
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import AsideMenu from './components/AsideMenu.vue';
 import { useUserStore } from './stores/user'
 
-export default defineComponent({
+export default{
   components: { AsideMenu },
   created() {
     const userInfo = useUserStore()
@@ -13,7 +12,7 @@ export default defineComponent({
     }
     
   },
-});
+};
 </script>
 
 <template>

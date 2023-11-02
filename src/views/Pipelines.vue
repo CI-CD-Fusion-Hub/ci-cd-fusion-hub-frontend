@@ -18,15 +18,14 @@
   </div>
 </template> 
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import Table from '../components/Table.vue';
 import Button from '../components/Button.vue';
 import ButtonSet from '../components/ButtonSet.vue';
 import Column from '../components/Column.vue';
 import { useNotifyStore } from '../stores/notifications'
 
-export default defineComponent({
+export default {
   components: {
     Table,
     Button,
@@ -55,5 +54,5 @@ export default defineComponent({
       this.isLoading = false
     }
   },
-});
+};
 </script>

@@ -20,7 +20,7 @@ export default defineComponent({
 </script>
 
 
-<style>
+<style scoped>
 .tag {
   padding: 3px 10px;
   color: white;

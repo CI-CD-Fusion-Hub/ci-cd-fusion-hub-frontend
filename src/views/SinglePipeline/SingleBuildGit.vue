@@ -46,8 +46,7 @@
     
 </template> 
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
 import Table from '../../components/Table.vue';
 import Button from '../../components/Button.vue';
 import ButtonSet from '../../components/ButtonSet.vue';
@@ -57,7 +56,7 @@ import TabView from '../../components/TabView.vue';
 import Tab from '../../components/Tab.vue';
 import { useNotifyStore } from '../../stores/notifications'
 
-export default defineComponent({
+export default {
     components: {
         Table,
         Button,
@@ -73,7 +72,7 @@ export default defineComponent({
             stage_logs: {},
             buildInfo: {},
             interval: {},
-            activeStage: null,
+            activeStage: undefined,
             backendUrl: import.meta.env.VITE_backendUrl,
             stageIcons: {
                 success: ['fas', 'check'],
@@ -155,7 +154,7 @@ export default defineComponent({
             this.$router.push({ path: this.$route.path, query: {activeStage: id} });
             this.scrollToBottom()
         },
-        isStageActive(stage: String): boolean {
+        isStageActive(stage) {
             return stage === this.getActiveStage ? true : false
         },
         scrollToBottom() {
@@ -175,7 +174,7 @@ export default defineComponent({
             clearInterval(value)
         });
     },
-})
+}
 </script>
 
 <style scoped>

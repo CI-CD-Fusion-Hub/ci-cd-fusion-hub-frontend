@@ -6,12 +6,10 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import { useNotifyStore } from '../stores/notifications'
 import Button from '../components/Button.vue'
 import ConfirmationDialog from '../components/Confirmation.vue'
 
-export default defineComponent({
+export default {
   components: {
     ConfirmationDialog,Button
   },
@@ -23,5 +21,5 @@ export default defineComponent({
   created() {
     console.log(this.isConfirmationVisible)
   },
-});
+};
 </script>
