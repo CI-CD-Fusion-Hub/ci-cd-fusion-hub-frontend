@@ -124,6 +124,10 @@ export default {
               <template #body="{ row }">
                 <VButtonSet>
                   <VButton
+                    :icon="['fas', 'eye']" :link-to="{ name: 'SinglePipeline', params: { application: row.application.type, pipeline_id: row.id } }"
+                    tooltip-text="View" tooltip-pos="Top"
+                  />
+                  <VButton
                     :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
                     @on-click="deleteDataPipeline(row.id)"
                   />
