@@ -1,10 +1,16 @@
-# Fusion Hub - Vue 3 + Vite Application
+# CI-CD-Fusion-Hub - Vue 3 + Vite Application
 
-Fusion Hub is a Vue 3 application built with Vite, designed for creating a hub for all things fusion. This README file provides an overview of the project and instructions on how to set it up and run it.
+CI-CD-Fusion-Hub is a Vue 3 application built with Vite that serves as a platform for connecting and managing multiple CI/CD platforms, including GitLab, GitHub, and Jenkins. This application empowers users to view and manage pipelines within a unified interface. Users can initiate, halt, and control pipelines, and administrators can enforce access restrictions to determine which users can access specific pipelines.
+
+CI-CD-Fusion-Hub offers cost-saving benefits by streamlining CI/CD pipeline management. For example, GitLab Enterprise users can reduce their costs per user by utilizing this application's efficient pipeline control and access management features.
+
+This README file provides detailed information about the project, including how to set it up and run it, project structure, available scripts, dependencies, and how to contribute to the development of the application.
+
 
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+- [Environment Configuration](#environment-configuration)
 - [Project Structure](#project-structure)
 - [Available Scripts](#available-scripts)
 - [Dependencies](#dependencies)
@@ -62,6 +68,16 @@ To preview the production build, use the following command:
 npm run preview
 ```
 This will serve the production build for previewing.
+
+## Environment Configuration
+
+By following these steps, you can configure the backend URL for your application. Make sure not to share sensitive information in your `.env` file, and keep it secure.
+
+1. Duplicate the `.env-template` file in the project root directory.
+
+2. Rename the duplicated file to `.env`.
+
+3. Open the `.env` file and set the `VITE_backendUrl` variable to your actual backend API URL. For example: `VITE_backendUrl=https://localhost:8111/api/v1`
 
 ### Project Structure
 The project structure is organized as follows:
