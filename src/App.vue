@@ -24,7 +24,7 @@ export default {
 
 <style>
  aside + main {
-  margin: 15px 15px 15px 220px;
+  margin: 20px 20px 20px 220px;
   position: relative;
   background-color: var(--main-bg-color);
   overflow-x: hidden;

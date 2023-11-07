@@ -29,7 +29,7 @@ export default {
         this.tableData = response.data.data;
       }
       catch (error) {
-        useNotifyStore().add('error', error.data.message || 'Unable to get all pipelines.');
+        useNotifyStore().add('error', error.data?.message || 'Unable to get all pipelines.');
       }
 
       this.isLoading = false;

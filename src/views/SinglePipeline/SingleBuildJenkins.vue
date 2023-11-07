@@ -36,7 +36,7 @@ export default {
     async loadData() {
       try {
         const response = await this.axios.get(
-                `${this.backendUrl}/pipelines/jenkins/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`,
+          `${this.backendUrl}/pipelines/jenkins/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`,
         );
 
         this.buildInfo = response.data.data;
@@ -60,7 +60,6 @@ export default {
     },
 
     scrollToBottom() {
-      console.log(this.$refs);
       if (this.$refs[this.buildInfo.name])
         this.$refs[this.buildInfo.name][0].scrollTop = this.$refs[this.buildInfo.name][0].scrollHeight;
     },

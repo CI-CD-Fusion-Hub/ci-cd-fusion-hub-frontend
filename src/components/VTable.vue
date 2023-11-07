@@ -191,7 +191,6 @@ table {
   background-color: #fff;
   padding: 15px;
   border-radius: var(--border-radius);
-  box-shadow: 0 2px 4px #00000014;
   font-size: 14px;
   overflow: hidden;
   position: relative;

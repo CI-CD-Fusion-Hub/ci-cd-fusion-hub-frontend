@@ -8,8 +8,13 @@ import VModal from '../../components/VModal.vue';
 import VDropdown from '../../components/Form/VDropdown.vue';
 import VTextInput from '../../components/Form/VTextInput.vue';
 import { useNotifyStore } from '../../stores/notifications';
+import { useVuelidate } from '@vuelidate/core'
+import { required, email, url, requiredIf, helpers } from '@vuelidate/validators'
 
 export default {
+  setup () {
+    return { v$: useVuelidate() }
+  },
   components: {
     VTable,
     VButton,
@@ -28,10 +33,19 @@ export default {
       isModalVissible: false,
       interval: null,
       formData: {},
-      params: {},
+      params: [],
       builds: [],
       backendUrl: import.meta.env.VITE_backendUrl,
     };
+  },
+  validations () {
+    const dynamicValidations = {formData: {}};
+
+    this.getAllParameters.forEach((e) => {
+      dynamicValidations.formData[e.key] = { requiredIf: helpers.withMessage(`${e.key} field cannot be empty.`, requiredIf(e?.required === true)) };
+    })
+
+    return dynamicValidations;
   },
   computed: {
     getAllParameters() {
@@ -101,7 +115,7 @@ export default {
         this.params.forEach((e) => {
           this.formData[e.key] = null;
         });
-
+        
         this.isModalVissible = true;
         this.isBtnLoading = false;
       }
@@ -155,6 +169,15 @@ export default {
     async startPipeline() {
       try {
         this.isModalBtnLoading = true;
+        const isValid = await this.v$.$validate()
+        console.log(isValid)
+        if (isValid === false) {
+          this.v$.formData.$errors.forEach((e) => {
+            useNotifyStore().add('error', e.$message);
+          })
+          this.isModalBtnLoading = false;
+          return
+        }
 
         const response = await this.axios({
           method: 'post',

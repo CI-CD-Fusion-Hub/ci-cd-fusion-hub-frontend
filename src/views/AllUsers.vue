@@ -8,8 +8,13 @@ import VDropdown from '../components/Form/VDropdown.vue';
 import VTag from '../components/VTag.vue';
 import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications';
+import { useVuelidate } from '@vuelidate/core'
+import { required, sameAs, email, helpers, requiredIf } from '@vuelidate/validators'
 
 export default {
+  setup () {
+    return { v$: useVuelidate() }
+  },
   components: {
     VTable,
     VButton,
@@ -36,9 +41,38 @@ export default {
         password: undefined,
         confirm_password: undefined,
         status: undefined,
-        access_level: undefined,
+        access_level: 'User',
       },
     };
+  },
+  validations () {
+    return {
+      formData: {
+        first_name: { 
+          required: helpers.withMessage('First Name field cannot be empty.', required)
+        },
+        last_name: { 
+          required: helpers.withMessage('Last Name field cannot be empty.', required)
+        },
+        email: { 
+          required: helpers.withMessage('Email field cannot be empty.', required),
+          email 
+        },
+        password: { 
+          requiredIfid: helpers.withMessage('Password field cannot be empty.', requiredIf(!this.formData.id))
+        },
+        confirm_password: { 
+          sameAsPassword: sameAs(this.formData.password),
+          requiredIfid: helpers.withMessage('Confirm Password field cannot be empty.', requiredIf(this.formData.password))
+        },
+        status: { 
+          requiredIfid: helpers.withMessage('Status field cannot be empty.', requiredIf(this.formData.id)),
+        },
+        access_level: { 
+          required: helpers.withMessage('Access Level field cannot be empty.', required)
+        },
+      }
+    }
   },
   async created() {
     this.loadData();
@@ -75,6 +109,16 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
+        const isValid = await this.v$.$validate()
+
+        if(!isValid){
+          this.v$.formData.$errors.forEach((e) => {
+            useNotifyStore().add('error', e.$message);
+          })
+          this.isLoading = false;
+          this.isBtnLoading = false;
+          return
+        }
 
         const response = await this.axios({
           method: 'post',
@@ -96,6 +140,16 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
+        const isValid = await this.v$.$validate()
+
+        if(!isValid){
+          this.v$.formData.$errors.forEach((e) => {
+            useNotifyStore().add('error', e.$message);
+          })
+          this.isLoading = false;
+          this.isBtnLoading = false;
+          return
+        }
 
         const response = await this.axios({
           method: 'put',
@@ -160,7 +214,7 @@ export default {
             <VButton :icon="['fas', 'pen-to-square']" tooltip-text="Edit" @on-click="showEditModal(row)" />
             <VButton
               :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
-              @on-click="requiredConfirmation(() => deleteData(row))"
+              @on-click="deleteData(row)"
             />
           </VButtonSet>
         </template>
@@ -172,7 +226,7 @@ export default {
 
     <VModal v-model:isActive="isAddModalVissible">
       <VTextInput
-        v-model:data="formData.first_name" name="first_name" placeholder="Fi  rst Name"
+        v-model:data="formData.first_name" name="first_name" placeholder="First Name"
         :icon="['fas', 'fa-user-tag']"
       />
       <VTextInput
@@ -180,9 +234,9 @@ export default {
         :icon="['fas', 'fa-user-tag']"
       />
       <VTextInput v-model:data="formData.email" name="email" placeholder="Email" :icon="['fas', 'fa-at']" />
-      <VTextInput v-model:data="formData.password" name="password" placeholder="******" :icon="['fas', 'fa-key']" />
+      <VTextInput v-model:data="formData.password" type="password" name="password" placeholder="******" :icon="['fas', 'fa-key']" />
       <VTextInput
-        v-model:data="formData.confirm_password" name="confirm_password" placeholder="******"
+        v-model:data="formData.confirm_password" type="password" name="confirm_password" placeholder="******"
         :icon="['fas', 'fa-key']"
       />
       <VDropdown

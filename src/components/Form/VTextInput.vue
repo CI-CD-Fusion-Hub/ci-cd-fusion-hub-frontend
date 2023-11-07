@@ -44,7 +44,7 @@ export default {
       :id="name"
       :type="type"
       :name="name"
-      placeholder=""
+      placeholder=" "
       :value="data"
       @input="$emit('update:data', $event.target.value)"
     >

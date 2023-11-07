@@ -10,6 +10,7 @@ import {
   faChevronLeft,
   faChevronRight,
   faEye,
+  faFilePen,
   faFilter,
   faFlag,
   faFloppyDisk,
@@ -19,6 +20,7 @@ import {
   faMagnifyingGlass,
   faPause,
   faPenToSquare,
+  faPersonPraying,
   faPhone,
   faPlay,
   faPlus,
@@ -34,6 +36,7 @@ import {
   faStop,
   faTag,
   faTrash,
+  faUserGear,
   faUserTag,
   faUsers,
   faXmark,
@@ -83,6 +86,9 @@ library.add(faArrowsRotate);
 library.add(faStop);
 library.add(faTag);
 library.add(faQuestion);
+library.add(faUserGear);
+library.add(faPersonPraying);
+library.add(faFilePen);
 
 axios.defaults.withCredentials = true;
 

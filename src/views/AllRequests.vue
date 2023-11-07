@@ -4,10 +4,12 @@ import VButton from '../components/VButton.vue';
 import VButtonSet from '../components/VButtonSet.vue';
 import VModal from '../components/VModal.vue';
 import VTextInput from '../components/Form/VTextInput.vue';
+import VDropdown from '../components/Form/VDropdown.vue';
+import VTag from '../components/VTag.vue';
 import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications';
 import { useVuelidate } from '@vuelidate/core'
-import { required, helpers } from '@vuelidate/validators'
+import { required, email, url, requiredIf, helpers } from '@vuelidate/validators'
 
 export default {
   setup () {
@@ -19,6 +21,8 @@ export default {
     VButtonSet,
     VModal,
     VTextInput,
+    VDropdown,
+    VTag,
     VColumn,
   },
   data() {
@@ -30,20 +34,18 @@ export default {
       backendUrl: import.meta.env.VITE_backendUrl,
       tableData: [],
       formData: {
-        id: null,
-        name: null,
-        description: null,
+        id: undefined,
+        message: undefined,
+        status: undefined,
       },
     };
   },
   validations () {
     return {
       formData: {
-        name: { 
-          required: helpers.withMessage('Name field cannot be empty.', required)
-        },
-        description: { 
-          required: helpers.withMessage('Description field cannot be empty.', required)
+        id: { required },
+        status: { 
+          required: helpers.withMessage('Status field cannot be empty.', required)
         },
       }
     }
@@ -54,9 +56,10 @@ export default {
   methods: {
     async loadData() {
       try {
-        const response = await this.axios.get(
-          `${this.backendUrl}/access_roles`,
-        );
+        const response = await this.axios({
+          method: 'get',
+          url: `${this.backendUrl}/users`,
+        });
 
         this.tableData = response.data.data;
       }
@@ -66,55 +69,24 @@ export default {
 
       this.isLoading = false;
     },
-    clear_form() {
-      Object.keys(this.formData).forEach(key => (this.formData[key] = ''));
+    clearForm() {
+      Object.keys(this.formData).forEach(key => (this.formData[key] = undefined));
     },
     showAddModal() {
-      this.clear_form();
+      this.clearForm();
       this.isAddModalVissible = true;
     },
     showEditModal(data) {
-      this.clear_form();
+      this.clearForm();
       Object.assign(this.formData, data);
       this.isEditModalVissible = true;
-    },
-    async addData() {
-      try {
-        this.isLoading = true;
-        this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
-        
-        if (isValid === false) {
-          this.v$.formData.$errors.forEach((e) => {
-            useNotifyStore().add('error', e.$message);
-          })
-          this.isBtnLoading = false;
-          this.isLoading = false;
-          return
-        }
-
-        const response = await this.axios({
-          method: 'post',
-          url: `${this.backendUrl}/access_roles`,
-          data: this.formData,
-        });
-
-        useNotifyStore().add(response.data.status, response.data.message);
-      }
-      catch (error) {
-        useNotifyStore().add('error', 'Error loading data!');
-      }
-
-      this.isAddModalVissible = false;
-      this.isBtnLoading = false;
-      await this.loadData();
     },
     async updateData() {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
         const isValid = await this.v$.$validate()
-        
+
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
@@ -126,7 +98,7 @@ export default {
 
         const response = await this.axios({
           method: 'put',
-          url: `${this.backendUrl}/access_roles/${this.formData.id}`,
+          url: `${this.backendUrl}/users/${this.formData.id}`,
           data: this.formData,
         });
 
@@ -146,7 +118,7 @@ export default {
 
         const response = await this.axios({
           method: 'delete',
-          url: `${this.backendUrl}/access_roles/${id}`,
+          url: `${this.backendUrl}/users/${id}`,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
@@ -164,48 +136,37 @@ export default {
 <template>
   <div>
     <VTable :table-data="tableData" :show-row-index="true" :is-loading="isLoading">
-      <VColumn header="Name" value="name" />
-      <VColumn header="Description" value="description" />
-      <VColumn header="Created Date" value="created_ts" />
+      <VColumn header="User" value="email" />
+      <VColumn header="Request Access" value="request_access" />
+      <VColumn header="Message" value="message" />
+      <VColumn header="Status" value="status">
+        <template #body="{ row }">
+          <VTag v-if="row" :value="row.status" :type="row.status" />
+        </template>
+      </VColumn>
       <VColumn header="Actions" value="actions">
         <template #body="{ row }">
-          <VButtonSet>
-            <VButton
-              :icon="['fas', 'eye']" :link-to="{ name: 'SingleRole', params: { roleId: row.id } }"
-              tooltip-text="View" tooltip-pos="Top"
-            />
+          <VButtonSet v-if="row">
             <VButton :icon="['fas', 'pen-to-square']" tooltip-text="Edit" @on-click="showEditModal(row)" />
             <VButton
               :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
-              @on-click="deleteData(row.id)"
+              @on-click="deleteData(row)"
             />
           </VButtonSet>
         </template>
       </VColumn>
     </VTable>
-    <VButton :icon="['fas', 'plus']" @on-click="showAddModal">
-      Add New
-    </VButton>
 
-    <VModal v-model:isActive="isAddModalVissible">
-      <VTextInput
-        v-model:data="formData.name" name="name" placeholder="Name" tooltip-text="Name of the access role."
-        tooltip-pos="left" :icon="['fas', 'fa-user-tag']"
-      />
-      <VTextInput
-        v-model:data="formData.description" name="description" placeholder="Description"
-        :icon="['fas', 'fa-user-tag']"
-      />
-      <VButton :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addData">
-        Add
-      </VButton>
-    </VModal>
     <VModal v-model:isActive="isEditModalVissible">
-      <VTextInput v-model:data="formData.name" name="name" placeholder="Name" :icon="['fas', 'fa-user-tag']" />
-      <VTextInput
-        v-model:data="formData.description" name="description" placeholder="Description"
-        :icon="['fas', 'fa-user-tag']"
+      <VDropdown
+        v-model:data="formData.status" name="status" placeholder="Status" :icon="['fas', 'flag']"
+        :options="['pending', 'rejected', 'inprogress', 'provided']"
       />
+      <VTextInput
+        v-model:data="formData.first_name" type="text" name="message" placeholder="Message"
+        :icon="['fas', 'fa-file-pen']"
+      />
+
       <VButton :icon="['fas', 'floppy-disk']" :is-loading="isBtnLoading" @on-click="updateData">
         Save
       </VButton>

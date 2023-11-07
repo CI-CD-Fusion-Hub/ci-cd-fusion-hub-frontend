@@ -3,8 +3,13 @@ import VTextInput from '../components/Form/VTextInput.vue';
 import VButton from '../components/VButton.vue';
 import { useNotifyStore } from '../stores/notifications';
 import { useUserStore } from '../stores/user';
+import { useVuelidate } from '@vuelidate/core'
+import { required, email, url, requiredIf, helpers } from '@vuelidate/validators'
 
 export default {
+  setup () {
+    return { v$: useVuelidate() }
+  },
   components: {
     VTextInput,
     VButton,
@@ -12,6 +17,7 @@ export default {
   data() {
     return {
       backendUrl: import.meta.env.VITE_backendUrl,
+      isBtnLoading: false,
       userStore: useUserStore(),
       formData: {
         email: null,
@@ -19,17 +25,42 @@ export default {
       },
     };
   },
+  validations () {
+    return {
+      formData: {
+        email: { 
+          required: helpers.withMessage('Email field cannot be empty.', required),
+          email: helpers.withMessage('Email field is not a valid email address.', email),
+        },
+        password: { 
+          required: helpers.withMessage('Password field cannot be empty.', required)
+        },
+      }
+    }
+  },
   methods: {
     async login() {
       try {
+        this.isBtnLoading = true;
+        const isValid = await this.v$.$validate()
+
+        if(!isValid){
+          this.v$.formData.$errors.forEach((e) => {
+            useNotifyStore().add('error', e.$message);
+          })
+          this.isBtnLoading = false;
+          return
+        }
+
         const response = await this.axios({
           method: 'post',
           url: `${this.backendUrl}/login`,
           data: this.formData,
         });
-
+        
         if (response.data.status === 'error') {
           useNotifyStore().add(response.data.status, response.data.message);
+          this.isBtnLoading = false;
           return;
         }
 
@@ -40,6 +71,8 @@ export default {
       catch (error) {
         useNotifyStore().add('error', error.data.message || 'Error loading data!');
       }
+
+      this.isBtnLoading = false;
     },
   },
 };
@@ -65,6 +98,7 @@ export default {
       />
       <VButton
         :icon="['fas', 'fa-right-to-bracket']"
+        :is-loading="isBtnLoading"
         @on-click="login()"
       >
         Login

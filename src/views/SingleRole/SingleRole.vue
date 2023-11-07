@@ -236,7 +236,7 @@ export default {
         v-model:data="formPipelineData" name="pipeline_id" placeholder="Pipelines" :icon="['fas', 'sitemap']"
         :options="pipelines" :is-multyselect="true" option-label="name" option-value="id" :is-searchable="true"
       />
-      <VButton v-if="pipelines.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataPipeline">
+      <VButton v-if="pipelines.length > 0 && formPipelineData.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataPipeline">
         Add
       </VButton>
     </VModal>
@@ -245,7 +245,7 @@ export default {
         v-model:data="formUserData" name="user_id" placeholder="Users" :icon="['fas', 'sitemap']"
         :options="users" :is-multyselect="true" option-label="email" option-value="id" :is-searchable="true"
       />
-      <VButton v-if="users.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataUser">
+      <VButton v-if="users.length > 0 && formUserData.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataUser">
         Add
       </VButton>
     </VModal>

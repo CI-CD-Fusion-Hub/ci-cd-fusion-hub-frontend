@@ -31,7 +31,8 @@ export default {
   margin-bottom: 3px;
   margin-right: 3px;
 }
-.tag.running {
+.tag.running,
+.tag.in-progress {
   background-color: #eeeb30;
   animation: fade 1.5s infinite;
   opacity: 1;
@@ -52,7 +53,9 @@ export default {
 }
 .tag.error,
 .tag.failed,
-.tag.failure {
+.tag.failure,
+.tag.rejected,
+.tag.startup_failure {
   background-color: #fc1521;
 }
 .tag.inactive,

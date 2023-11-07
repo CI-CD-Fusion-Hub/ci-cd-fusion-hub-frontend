@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     remove_notification(index) {
-      this.all_notifications.pop(index);
+      this.all_notifications.splice(index, 1);
     },
   },
 };

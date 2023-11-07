@@ -10,6 +10,9 @@ import Users from '../views/AllUsers.vue';
 import SingleUser from '../views/SingleUser/SingleUser.vue';
 import Applications from '../views/AllApplications.vue';
 import Settings from '../views/AllSettings.vue';
+import UserSettings from '../views/UserSettings.vue';
+import Requests from '../views/AllRequests.vue';
+import UserRequests from '../views/UserRequests.vue';
 
 const routes = [
   { path: '/login', component: Login },
@@ -44,6 +47,9 @@ const routes = [
   },
   { path: '/applications', component: Applications },
   { path: '/settings', component: Settings },
+  { path: '/profile', component: UserSettings },
+  { path: '/requests', component: Requests },
+  { path: '/user_requests', component: UserRequests },
 ];
 
 const router = createRouter({
