@@ -1,4 +1,6 @@
 <script>
+import { useVuelidate } from '@vuelidate/core';
+import { helpers, required } from '@vuelidate/validators';
 import VTable from '../components/VTable.vue';
 import VButton from '../components/VButton.vue';
 import VButtonSet from '../components/VButtonSet.vue';
@@ -8,13 +10,8 @@ import VDropdown from '../components/Form/VDropdown.vue';
 import VTag from '../components/VTag.vue';
 import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications';
-import { useVuelidate } from '@vuelidate/core'
-import { required, email, url, requiredIf, helpers } from '@vuelidate/validators'
 
 export default {
-  setup () {
-    return { v$: useVuelidate() }
-  },
   components: {
     VTable,
     VButton,
@@ -24,6 +21,9 @@ export default {
     VDropdown,
     VTag,
     VColumn,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
     return {
@@ -40,15 +40,15 @@ export default {
       },
     };
   },
-  validations () {
+  validations() {
     return {
       formData: {
         id: { required },
-        status: { 
-          required: helpers.withMessage('Status field cannot be empty.', required)
+        status: {
+          required: helpers.withMessage('Status field cannot be empty.', required),
         },
-      }
-    }
+      },
+    };
   },
   async created() {
     this.loadData();
@@ -85,15 +85,15 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
+        const isValid = await this.v$.$validate();
 
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isBtnLoading = false;
           this.isLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({

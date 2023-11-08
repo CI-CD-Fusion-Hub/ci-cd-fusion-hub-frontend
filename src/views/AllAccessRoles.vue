@@ -1,4 +1,6 @@
 <script>
+import { useVuelidate } from '@vuelidate/core';
+import { helpers, required } from '@vuelidate/validators';
 import VTable from '../components/VTable.vue';
 import VButton from '../components/VButton.vue';
 import VButtonSet from '../components/VButtonSet.vue';
@@ -6,13 +8,8 @@ import VModal from '../components/VModal.vue';
 import VTextInput from '../components/Form/VTextInput.vue';
 import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications';
-import { useVuelidate } from '@vuelidate/core'
-import { required, helpers } from '@vuelidate/validators'
 
 export default {
-  setup () {
-    return { v$: useVuelidate() }
-  },
   components: {
     VTable,
     VButton,
@@ -20,6 +17,9 @@ export default {
     VModal,
     VTextInput,
     VColumn,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
     return {
@@ -36,17 +36,17 @@ export default {
       },
     };
   },
-  validations () {
+  validations() {
     return {
       formData: {
-        name: { 
-          required: helpers.withMessage('Name field cannot be empty.', required)
+        name: {
+          required: helpers.withMessage('Name field cannot be empty.', required),
         },
-        description: { 
-          required: helpers.withMessage('Description field cannot be empty.', required)
+        description: {
+          required: helpers.withMessage('Description field cannot be empty.', required),
         },
-      }
-    }
+      },
+    };
   },
   async created() {
     this.loadData();
@@ -82,15 +82,15 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
-        
+        const isValid = await this.v$.$validate();
+
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isBtnLoading = false;
           this.isLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({
@@ -113,15 +113,15 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
-        
+        const isValid = await this.v$.$validate();
+
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isBtnLoading = false;
           this.isLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({

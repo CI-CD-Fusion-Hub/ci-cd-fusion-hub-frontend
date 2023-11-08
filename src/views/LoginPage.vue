@@ -1,18 +1,18 @@
 <script>
+import { useVuelidate } from '@vuelidate/core';
+import { email, helpers, required } from '@vuelidate/validators';
 import VTextInput from '../components/Form/VTextInput.vue';
 import VButton from '../components/VButton.vue';
 import { useNotifyStore } from '../stores/notifications';
 import { useUserStore } from '../stores/user';
-import { useVuelidate } from '@vuelidate/core'
-import { required, email, url, requiredIf, helpers } from '@vuelidate/validators'
 
 export default {
-  setup () {
-    return { v$: useVuelidate() }
-  },
   components: {
     VTextInput,
     VButton,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
     return {
@@ -25,31 +25,31 @@ export default {
       },
     };
   },
-  validations () {
+  validations() {
     return {
       formData: {
-        email: { 
+        email: {
           required: helpers.withMessage('Email field cannot be empty.', required),
           email: helpers.withMessage('Email field is not a valid email address.', email),
         },
-        password: { 
-          required: helpers.withMessage('Password field cannot be empty.', required)
+        password: {
+          required: helpers.withMessage('Password field cannot be empty.', required),
         },
-      }
-    }
+      },
+    };
   },
   methods: {
     async login() {
       try {
         this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
+        const isValid = await this.v$.$validate();
 
-        if(!isValid){
+        if (!isValid) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isBtnLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({
@@ -57,7 +57,7 @@ export default {
           url: `${this.backendUrl}/login`,
           data: this.formData,
         });
-        
+
         if (response.data.status === 'error') {
           useNotifyStore().add(response.data.status, response.data.message);
           this.isBtnLoading = false;

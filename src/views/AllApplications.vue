@@ -1,4 +1,6 @@
 <script>
+import { useVuelidate } from '@vuelidate/core';
+import { email, helpers, required, requiredIf, url } from '@vuelidate/validators';
 import VTable from '../components/VTable.vue';
 import VButton from '../components/VButton.vue';
 import VButtonSet from '../components/VButtonSet.vue';
@@ -8,13 +10,8 @@ import VDropdown from '../components/Form/VDropdown.vue';
 import VTag from '../components/VTag.vue';
 import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications';
-import { useVuelidate } from '@vuelidate/core'
-import { required, email, url, requiredIf, helpers } from '@vuelidate/validators'
 
 export default {
-  setup () {
-    return { v$: useVuelidate() }
-  },
   components: {
     VTable,
     VButton,
@@ -24,6 +21,9 @@ export default {
     VDropdown,
     VTag,
     VColumn,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
     return {
@@ -46,31 +46,31 @@ export default {
       },
     };
   },
-  validations () {
+  validations() {
     return {
       formData: {
-        name: { 
-          required: helpers.withMessage('Name field cannot be empty.', required)
+        name: {
+          required: helpers.withMessage('Name field cannot be empty.', required),
         },
-        type: { 
-          required: helpers.withMessage('Application field cannot be empty.', required)
+        type: {
+          required: helpers.withMessage('Application field cannot be empty.', required),
         },
         auth_user: {
-          requiredIftype: helpers.withMessage('Authentication User field cannot be empty.', requiredIf(this.formData.type == 'Jenkins')),
-          email
-         },
-        auth_pass: { 
-          required: helpers.withMessage('Token/Password field cannot be empty.', required)
+          requiredIftype: helpers.withMessage('Authentication User field cannot be empty.', requiredIf(this.formData.type === 'Jenkins')),
+          email,
         },
-        base_url: { 
+        auth_pass: {
+          required: helpers.withMessage('Token/Password field cannot be empty.', required),
+        },
+        base_url: {
           required: helpers.withMessage('API Url field cannot be empty.', required),
-          url 
+          url,
         },
         status: {
           requiredIfstatus: helpers.withMessage('Status field cannot be empty.', requiredIf(this.formData.id)),
-        }
-      }
-    }
+        },
+      },
+    };
   },
   async created() {
     this.loadData();
@@ -106,16 +106,24 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
+        const isValid = await this.v$.$validate();
 
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isBtnLoading = false;
           this.isLoading = false;
-          return
+          return;
         }
+
+        const response = await this.axios({
+          method: 'post',
+          url: `${this.backendUrl}/applications`,
+          data: this.formData,
+        });
+
+        useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
         useNotifyStore().add('error', error.message);
@@ -129,15 +137,15 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
+        const isValid = await this.v$.$validate();
 
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isBtnLoading = false;
           this.isLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({
@@ -159,14 +167,14 @@ export default {
     async verifyData() {
       try {
         this.isBtnVerifyLoading = true;
-        const isValid = await this.v$.$validate()
+        const isValid = await this.v$.$validate();
 
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isBtnVerifyLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({

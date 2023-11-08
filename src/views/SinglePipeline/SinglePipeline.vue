@@ -1,4 +1,6 @@
 <script>
+import { useVuelidate } from '@vuelidate/core';
+import { helpers, requiredIf } from '@vuelidate/validators';
 import VTable from '../../components/VTable.vue';
 import VButton from '../../components/VButton.vue';
 import VButtonSet from '../../components/VButtonSet.vue';
@@ -8,13 +10,8 @@ import VModal from '../../components/VModal.vue';
 import VDropdown from '../../components/Form/VDropdown.vue';
 import VTextInput from '../../components/Form/VTextInput.vue';
 import { useNotifyStore } from '../../stores/notifications';
-import { useVuelidate } from '@vuelidate/core'
-import { required, email, url, requiredIf, helpers } from '@vuelidate/validators'
 
 export default {
-  setup () {
-    return { v$: useVuelidate() }
-  },
   components: {
     VTable,
     VButton,
@@ -24,6 +21,9 @@ export default {
     VModal,
     VTextInput,
     VDropdown,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
     return {
@@ -38,12 +38,12 @@ export default {
       backendUrl: import.meta.env.VITE_backendUrl,
     };
   },
-  validations () {
-    const dynamicValidations = {formData: {}};
+  validations() {
+    const dynamicValidations = { formData: {} };
 
     this.getAllParameters.forEach((e) => {
       dynamicValidations.formData[e.key] = { requiredIf: helpers.withMessage(`${e.key} field cannot be empty.`, requiredIf(e?.required === true)) };
-    })
+    });
 
     return dynamicValidations;
   },
@@ -115,7 +115,7 @@ export default {
         this.params.forEach((e) => {
           this.formData[e.key] = null;
         });
-        
+
         this.isModalVissible = true;
         this.isBtnLoading = false;
       }
@@ -169,14 +169,14 @@ export default {
     async startPipeline() {
       try {
         this.isModalBtnLoading = true;
-        const isValid = await this.v$.$validate()
-        console.log(isValid)
+        const isValid = await this.v$.$validate();
+        console.log(isValid);
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isModalBtnLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({

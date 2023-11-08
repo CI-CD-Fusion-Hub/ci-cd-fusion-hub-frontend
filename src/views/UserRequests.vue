@@ -26,11 +26,10 @@ export default {
       isEditModalVissible: false,
       pipelines: [{
         id: 23,
-        name: "ansible-users"
-      },
-      {
+        name: 'ansible-users',
+      }, {
         id: 24,
-        name: "af-access-manager"
+        name: 'af-access-manager',
       }],
       formData: {
         id: undefined,
@@ -70,8 +69,7 @@ export default {
             id: 23,
             name: 'fusion-hub',
           }],
-        },
-        {
+        }, {
           status: 'in-progress',
           message: '',
           requested_pipelines: [{

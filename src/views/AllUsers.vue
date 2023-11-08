@@ -1,4 +1,6 @@
 <script>
+import { useVuelidate } from '@vuelidate/core';
+import { email, helpers, required, requiredIf, sameAs } from '@vuelidate/validators';
 import VTable from '../components/VTable.vue';
 import VButton from '../components/VButton.vue';
 import VButtonSet from '../components/VButtonSet.vue';
@@ -8,13 +10,8 @@ import VDropdown from '../components/Form/VDropdown.vue';
 import VTag from '../components/VTag.vue';
 import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications';
-import { useVuelidate } from '@vuelidate/core'
-import { required, sameAs, email, helpers, requiredIf } from '@vuelidate/validators'
 
 export default {
-  setup () {
-    return { v$: useVuelidate() }
-  },
   components: {
     VTable,
     VButton,
@@ -24,6 +21,9 @@ export default {
     VDropdown,
     VTag,
     VColumn,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
     return {
@@ -45,34 +45,34 @@ export default {
       },
     };
   },
-  validations () {
+  validations() {
     return {
       formData: {
-        first_name: { 
-          required: helpers.withMessage('First Name field cannot be empty.', required)
+        first_name: {
+          required: helpers.withMessage('First Name field cannot be empty.', required),
         },
-        last_name: { 
-          required: helpers.withMessage('Last Name field cannot be empty.', required)
+        last_name: {
+          required: helpers.withMessage('Last Name field cannot be empty.', required),
         },
-        email: { 
+        email: {
           required: helpers.withMessage('Email field cannot be empty.', required),
-          email 
+          email,
         },
-        password: { 
-          requiredIfid: helpers.withMessage('Password field cannot be empty.', requiredIf(!this.formData.id))
+        password: {
+          requiredIfid: helpers.withMessage('Password field cannot be empty.', requiredIf(!this.formData.id)),
         },
-        confirm_password: { 
+        confirm_password: {
           sameAsPassword: sameAs(this.formData.password),
-          requiredIfid: helpers.withMessage('Confirm Password field cannot be empty.', requiredIf(this.formData.password))
+          requiredIfid: helpers.withMessage('Confirm Password field cannot be empty.', requiredIf(this.formData.password)),
         },
-        status: { 
+        status: {
           requiredIfid: helpers.withMessage('Status field cannot be empty.', requiredIf(this.formData.id)),
         },
-        access_level: { 
-          required: helpers.withMessage('Access Level field cannot be empty.', required)
+        access_level: {
+          required: helpers.withMessage('Access Level field cannot be empty.', required),
         },
-      }
-    }
+      },
+    };
   },
   async created() {
     this.loadData();
@@ -109,15 +109,15 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
+        const isValid = await this.v$.$validate();
 
-        if(!isValid){
+        if (!isValid) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isLoading = false;
           this.isBtnLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({
@@ -140,15 +140,15 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
-        const isValid = await this.v$.$validate()
+        const isValid = await this.v$.$validate();
 
-        if(!isValid){
+        if (!isValid) {
           this.v$.formData.$errors.forEach((e) => {
             useNotifyStore().add('error', e.$message);
-          })
+          });
           this.isLoading = false;
           this.isBtnLoading = false;
-          return
+          return;
         }
 
         const response = await this.axios({

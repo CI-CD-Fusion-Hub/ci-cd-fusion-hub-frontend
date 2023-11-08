@@ -1,23 +1,23 @@
 <script>
+import { useVuelidate } from '@vuelidate/core';
+import { helpers, numeric, required, requiredIf, url } from '@vuelidate/validators';
 import VButton from '../components/VButton.vue';
 import VTab from '../components/VTab.vue';
 import VTabView from '../components/VTabView.vue';
 import VTextInput from '../components/Form/VTextInput.vue';
 import VDropdown from '../components/Form/VDropdown.vue';
 import { useNotifyStore } from '../stores/notifications';
-import { useVuelidate } from '@vuelidate/core'
-import { required, numeric, url, requiredIf, helpers } from '@vuelidate/validators'
 
 export default {
-  setup () {
-    return { v$: useVuelidate() }
-  },
   components: {
     VButton,
     VTab,
     VTabView,
     VTextInput,
     VDropdown,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
     return {
@@ -31,42 +31,42 @@ export default {
         cas_verify_ssl: undefined,
         adds_tennat_name: undefined,
         adds_client_id: undefined,
-        adds_client_secret: undefined
+        adds_client_secret: undefined,
       },
     };
   },
-  validations () {
+  validations() {
     return {
       formData: {
-        type: { 
-          required: helpers.withMessage('Type field cannot be empty.', required)
+        type: {
+          required: helpers.withMessage('Type field cannot be empty.', required),
         },
         cas_service_url: {
-          requiredIftype: helpers.withMessage('Service URL field cannot be empty.', requiredIf(this.formData.type == 'CAS')),
-          url
+          requiredIftype: helpers.withMessage('Service URL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
+          url,
         },
         cas_server_url: {
-          requiredIftype: helpers.withMessage('Server URL field cannot be empty.', requiredIf(this.formData.type == 'CAS')),
-          url
+          requiredIftype: helpers.withMessage('Server URL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
+          url,
         },
         cas_version: {
-          requiredIftype: helpers.withMessage('Version field cannot be empty.', requiredIf(this.formData.type == 'CAS')),
-          numeric
+          requiredIftype: helpers.withMessage('Version field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
+          numeric,
         },
         cas_verify_ssl: {
-          required: helpers.withMessage('Verify SSL field cannot be empty.', requiredIf(this.formData.type == 'CAS'))
+          required: helpers.withMessage('Verify SSL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
         },
         adds_tennat_name: {
-          requiredIftype: helpers.withMessage('Tennant Name field cannot be empty.', requiredIf(this.formData.type == 'ADDS'))
+          requiredIftype: helpers.withMessage('Tennant Name field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
         },
         adds_client_id: {
-          requiredIftype: helpers.withMessage('Client ID cannot be empty.', requiredIf(this.formData.type == 'ADDS'))
+          requiredIftype: helpers.withMessage('Client ID cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
         },
         adds_client_secret: {
-          requiredIftype: helpers.withMessage('Client Secret field cannot be empty.', requiredIf(this.formData.type == 'ADDS'))
-        }
-      }
-    }
+          requiredIftype: helpers.withMessage('Client Secret field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+        },
+      },
+    };
   },
   async mounted() {
     await this.loadData();
