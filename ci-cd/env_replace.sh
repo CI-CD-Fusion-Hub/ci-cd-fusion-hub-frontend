@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-DIST_DIR=./dist
+DIST_DIR=/app
 vue_app_vars=()
 
 # Iterate through environment variables
