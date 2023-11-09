@@ -11,7 +11,7 @@ COPY ci-cd/nginx.conf /etc/nginx/nginx.conf
 RUN apk update && apk upgrade
 
 # Running the script at container run
-COPY ./ci-cd/env_replace.sh /docker-entrypoint.d/env_replace.sh
+COPY ci-cd/env_replace.sh /docker-entrypoint.d/env_replace.sh
 RUN chmod +x /docker-entrypoint.d/env_replace.sh
 
 EXPOSE 80
