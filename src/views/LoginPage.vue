@@ -109,13 +109,13 @@ export default {
 
 <style>
 .login_holder {
-    display: flex;
-    background-image: url('./src/assets/img/background.jpg');
-    height: 100vh;
-    position: absolute;
-    width: 100vw;
-    left: 0;
-    top: 0;
+  display: flex;
+  background-image: url('background.jpg');
+  height: 100vh;
+  position: absolute;
+  width: 100vw;
+  left: 0;
+  top: 0;
 }
 
 .login_holder h1 {

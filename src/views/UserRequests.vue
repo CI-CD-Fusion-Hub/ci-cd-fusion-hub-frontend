@@ -4,6 +4,7 @@ import VButton from '../components/VButton.vue';
 import VButtonSet from '../components/VButtonSet.vue';
 import VModal from '../components/VModal.vue';
 import VDropdown from '../components/Form/VDropdown.vue';
+import VTextInput from '../components/Form/VTextInput.vue';
 import VTag from '../components/VTag.vue';
 import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications';
@@ -15,6 +16,7 @@ export default {
     VButtonSet,
     VModal,
     VDropdown,
+    VTextInput,
     VTag,
     VColumn,
   },
@@ -24,13 +26,8 @@ export default {
       isBtnLoading: false,
       isAddModalVissible: false,
       isEditModalVissible: false,
-      pipelines: [{
-        id: 23,
-        name: 'ansible-users',
-      }, {
-        id: 24,
-        name: 'af-access-manager',
-      }],
+      backendUrl: import.meta.env.VITE_backendUrl,
+      pipelines: [],
       formData: {
         id: undefined,
         pipelines: undefined,
@@ -43,50 +40,12 @@ export default {
   methods: {
     async loadData() {
       try {
-        // const response = await this.axios({
-        //   method: 'get',
-        //   url: `${this.backendUrl}/user/requests`,
-        // });
+        const response = await this.axios({
+          method: 'get',
+          url: `${this.backendUrl}/user/requests`,
+        });
 
-        // this.tableData = response.data.data;
-        this.tableData = [{
-          status: 'success',
-          message: '',
-          requested_pipelines: [{
-            id: 23,
-            name: 'ansible-users',
-          }, {
-            id: 24,
-            name: 'af-access-manager',
-          }, {
-            id: 25,
-            name: 'sample-app',
-          }],
-        }, {
-          status: 'pending',
-          message: '',
-          requested_pipelines: [{
-            id: 23,
-            name: 'fusion-hub',
-          }],
-        }, {
-          status: 'in-progress',
-          message: '',
-          requested_pipelines: [{
-            id: 23,
-            name: 'fusion-hub',
-          }],
-        }, {
-          status: 'rejected',
-          message: 'You are not allowed to have access to \'af-access-manager\'. Please, update your request and send it again.',
-          requested_pipelines: [{
-            id: 23,
-            name: 'cuartz-frontend',
-          }, {
-            id: 24,
-            name: 'cuartz-backend',
-          }],
-        }];
+        this.tableData = response.data.data;
       }
       catch (error) {
         useNotifyStore().add('error', 'Error loading data!');
@@ -97,15 +56,31 @@ export default {
     clearForm() {
       Object.keys(this.formData).forEach(key => (this.formData[key] = undefined));
     },
-    showAddModal() {
+    async showAddModal() {
       this.clearForm();
+      await this.getUnassignedPipelines();
       this.isAddModalVissible = true;
     },
     showEditModal(data) {
       this.clearForm();
+      this.getUnassignedPipelines();
       this.formData.id = data.id;
-      this.formData.requested_pipelines = data.requested_pipelines;
+      this.formData.pipelines = data.pipelines.map(item => item.name);
+      this.formData.message = data.message;
+      this.formData.status = data.status;
       this.isEditModalVissible = true;
+    },
+    async getUnassignedPipelines() {
+      try {
+        const response = await this.axios.get(
+          `${this.backendUrl}/user/unassigned_pipelines`,
+        );
+
+        this.pipelines = response.data.data;
+      }
+      catch (error) {
+        useNotifyStore().add('error', 'Error loading data!');
+      }
     },
     async addData() {
       try {
@@ -114,7 +89,7 @@ export default {
 
         const response = await this.axios({
           method: 'post',
-          url: `${this.backendUrl}/users/requests`,
+          url: `${this.backendUrl}/user/requests`,
           data: this.formData,
         });
 
@@ -135,7 +110,7 @@ export default {
 
         const response = await this.axios({
           method: 'put',
-          url: `${this.backendUrl}/users/requests/${this.formData.id}`,
+          url: `${this.backendUrl}/user/requests/${this.formData.id}`,
           data: this.formData,
         });
 
@@ -155,7 +130,7 @@ export default {
 
         const response = await this.axios({
           method: 'delete',
-          url: `${this.backendUrl}/users/${id}`,
+          url: `${this.backendUrl}/user/requests/${id}`,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
@@ -180,7 +155,7 @@ export default {
       </VColumn>
       <VColumn header="Requested pipelines" value="requested_pipelines">
         <template #body="{ row }">
-          <VTag v-for="pipeline in row.requested_pipelines" :key="pipeline" :value="pipeline.name" type="pending" />
+          <VTag v-for="pipeline in row.pipelines" :key="pipeline" :value="pipeline.name" type="pending" />
         </template>
       </VColumn>
       <VColumn header="Message" value="message" />
@@ -205,14 +180,26 @@ export default {
         v-model:data="formData.pipelines" name="requested_pipelines" placeholder="Pipelines" :icon="['fas', 'sitemap']"
         :options="pipelines" :is-multyselect="true" option-label="name" option-value="id" :is-searchable="true"
       />
+      <VTextInput
+        v-model:data="formData.message" type="text" name="message" placeholder="Message"
+        :icon="['fas', 'fa-file-pen']"
+      />
       <VButton v-if="formData.pipelines?.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addData">
         Add
       </VButton>
     </VModal>
     <VModal v-model:isActive="isEditModalVissible">
       <VDropdown
+        v-model:data="formData.status" name="status" placeholder="Status" :icon="['fas', 'flag']"
+        :options="['pending', 'canceled']"
+      />
+      <VDropdown
         v-model:data="formData.pipelines" name="requested_pipelines" placeholder="Pipelines" :icon="['fas', 'sitemap']"
         :options="pipelines" :is-multyselect="true" option-label="name" option-value="id" :is-searchable="true"
+      />
+      <VTextInput
+        v-model:data="formData.message" type="text" name="message" placeholder="Message"
+        :icon="['fas', 'fa-file-pen']"
       />
       <VButton v-if="formData.pipelines?.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="updateData">
         Add

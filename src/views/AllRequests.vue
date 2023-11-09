@@ -47,6 +47,9 @@ export default {
         status: {
           required: helpers.withMessage('Status field cannot be empty.', required),
         },
+        message: {
+          required: helpers.withMessage('Message field cannot be empty.', required),
+        },
       },
     };
   },
@@ -58,7 +61,7 @@ export default {
       try {
         const response = await this.axios({
           method: 'get',
-          url: `${this.backendUrl}/users`,
+          url: `${this.backendUrl}/users_requests`,
         });
 
         this.tableData = response.data.data;
@@ -78,7 +81,9 @@ export default {
     },
     showEditModal(data) {
       this.clearForm();
-      Object.assign(this.formData, data);
+      this.formData.id = data.id;
+      this.formData.status = data.status;
+      this.formData.message = data.message;
       this.isEditModalVissible = true;
     },
     async updateData() {
@@ -98,7 +103,7 @@ export default {
 
         const response = await this.axios({
           method: 'put',
-          url: `${this.backendUrl}/users/${this.formData.id}`,
+          url: `${this.backendUrl}/users_requests/${this.formData.id}`,
           data: this.formData,
         });
 
@@ -118,7 +123,7 @@ export default {
 
         const response = await this.axios({
           method: 'delete',
-          url: `${this.backendUrl}/users/${id}`,
+          url: `${this.backendUrl}/users_requests/${id}`,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
@@ -136,8 +141,16 @@ export default {
 <template>
   <div>
     <VTable :table-data="tableData" :show-row-index="true" :is-loading="isLoading">
-      <VColumn header="User" value="email" />
-      <VColumn header="Request Access" value="request_access" />
+      <VColumn header="User" value="user">
+        <template #body="{ row }">
+          {{ row.user.email }}
+        </template>
+      </VColumn>
+      <VColumn header="Request Access" value="pipelines">
+        <template #body="{ row }">
+          <VTag v-for="pipeline in row.pipelines" :key="pipeline" :value="pipeline.name" type="pending" />
+        </template>
+      </VColumn>
       <VColumn header="Message" value="message" />
       <VColumn header="Status" value="status">
         <template #body="{ row }">
@@ -150,7 +163,7 @@ export default {
             <VButton :icon="['fas', 'pen-to-square']" tooltip-text="Edit" @on-click="showEditModal(row)" />
             <VButton
               :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
-              @on-click="deleteData(row)"
+              @on-click="deleteData(row.id)"
             />
           </VButtonSet>
         </template>
@@ -160,10 +173,10 @@ export default {
     <VModal v-model:isActive="isEditModalVissible">
       <VDropdown
         v-model:data="formData.status" name="status" placeholder="Status" :icon="['fas', 'flag']"
-        :options="['pending', 'rejected', 'inprogress', 'provided']"
+        :options="['pending', 'in-progress', 'completed', 'canceled', 'declined']"
       />
       <VTextInput
-        v-model:data="formData.first_name" type="text" name="message" placeholder="Message"
+        v-model:data="formData.message" type="text" name="message" placeholder="Message"
         :icon="['fas', 'fa-file-pen']"
       />
 

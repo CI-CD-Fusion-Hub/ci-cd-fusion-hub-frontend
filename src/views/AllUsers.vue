@@ -98,8 +98,8 @@ export default {
     },
     showAddModal() {
       this.clearForm();
-      this.formData.status = ''
-      this.formData.access_level = ''
+      this.formData.status = '';
+      this.formData.access_level = '';
       this.isAddModalVissible = true;
     },
     showEditModal(data) {

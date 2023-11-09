@@ -55,7 +55,8 @@ export default {
 .tag.failed,
 .tag.failure,
 .tag.rejected,
-.tag.startup_failure {
+.tag.startup_failure,
+.tag.declined {
   background-color: #fc1521;
 }
 .tag.inactive,

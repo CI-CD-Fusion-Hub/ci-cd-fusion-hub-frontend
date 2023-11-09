@@ -3,6 +3,7 @@ WORKDIR /app
 COPY . .
 RUN npm install
 ENV VITE_backendUrl=VITE_backendUrl_REPLACE
+RUN npm run lint:fix
 RUN npm run build
 
 FROM nginx:stable-alpine as production-stage
