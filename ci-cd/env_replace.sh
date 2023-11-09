@@ -7,6 +7,7 @@ replace_variables() {
     for var in "$(env | grep '^VITE_')"; do
         local var_name="${var%%=*}"
         local var_value="${var#*=}"
+        echo "REPLACE: ${var_name}_REPLACE ---> $var_value"
         sed -i "s#${var_name}_REPLACE#$var_value#g" "$file"
     done
 }
