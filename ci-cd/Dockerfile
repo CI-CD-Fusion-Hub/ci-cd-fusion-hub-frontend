@@ -13,6 +13,7 @@ RUN apk update && apk upgrade
 # Running the script at container run
 COPY ci-cd/env_replace.sh /docker-entrypoint.d/env_replace.sh
 RUN chmod +x /docker-entrypoint.d/env_replace.sh
+RUN ls -al /docker-entrypoint.d/
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
