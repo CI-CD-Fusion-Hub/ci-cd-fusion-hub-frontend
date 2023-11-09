@@ -41,7 +41,7 @@ export default {
         password: undefined,
         confirm_password: undefined,
         status: undefined,
-        access_level: 'User',
+        access_level: undefined,
       },
     };
   },
@@ -98,6 +98,8 @@ export default {
     },
     showAddModal() {
       this.clearForm();
+      this.formData.status = ''
+      this.formData.access_level = ''
       this.isAddModalVissible = true;
     },
     showEditModal(data) {
@@ -242,6 +244,10 @@ export default {
       <VDropdown
         v-model:data="formData.access_level" name="account_level" placeholder="Account Level"
         :icon="['fas', 'user-tag']" :options="['User', 'Admin']"
+      />
+      <VDropdown
+        v-model:data="formData.status" name="status" placeholder="Status" :icon="['fas', 'flag']"
+        :options="['active', 'inactive']"
       />
       <VButton :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addData">
         Add

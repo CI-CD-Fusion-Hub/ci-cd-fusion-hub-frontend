@@ -264,6 +264,10 @@ export default {
         v-model:data="formData.base_url" name="base_url" type="url" placeholder="API Url"
         :icon="['fas', 'fa-user-tag']"
       />
+      <VDropdown
+        v-model:data="formData.status" name="status" placeholder="Status" :icon="['fas', 'flag']"
+        :options="['active', 'inactive']"
+      />
       <VButtonSet class="flex-end">
         <VButton :icon="['fas', 'check']" :is-loading="isBtnVerifyLoading" @on-click="verifyData">
           Verify
