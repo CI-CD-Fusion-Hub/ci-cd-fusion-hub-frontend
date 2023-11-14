@@ -28,7 +28,6 @@ export default {
         type: undefined,
         admin_users: '',
         properties: {
-          cas_service_url: undefined,
           cas_server_url: undefined,
           cas_version: undefined,
           cas_verify_ssl: false,
@@ -51,10 +50,6 @@ export default {
           required: helpers.withMessage('Type field cannot be empty.', required),
         },
         properties: {
-          cas_service_url: {
-            requiredIftype: helpers.withMessage('Service URL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
-            url,
-          },
           cas_server_url: {
             requiredIftype: helpers.withMessage('Server URL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
             url,
@@ -147,10 +142,6 @@ export default {
             :options="['Local', 'CAS', 'ADDS']"
           />
           <template v-if="formData.type === 'CAS'">
-            <VTextInput
-              v-model:data="formData.properties.cas_service_url" type="text" name="cas_service_url" placeholder="Service URL"
-              :icon="['fas', 'fa-user-tag']"
-            />
             <VTextInput
               v-model:data="formData.properties.cas_server_url" type="text" name="cas_server_url" placeholder="Server URL"
               :icon="['fas', 'fa-user-tag']"
