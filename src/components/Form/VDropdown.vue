@@ -116,9 +116,12 @@ export default {
       if (!this.options)
         return this.placeholder;
 
-      // const placeholder = this.options.filter((item) => {
-      //   return item[this.optionLabel] === e[this.optionLabel];
-      // });
+      const placeholder = this.options.filter((item) => {
+        return item[this.optionLabel] === e[this.optionLabel];
+      });
+
+      if (placeholder.length === 0)
+        return this.placeholder;
 
       return this.placeholder;
     },
