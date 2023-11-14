@@ -106,7 +106,6 @@ export default {
         this.isBtnLoading = true;
         this.isLoading = false;
         const isValid = await this.v$.$validate();
-        
 
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
@@ -123,7 +122,7 @@ export default {
           url: `${this.backendUrl}/auth_method`,
           data: this.formData,
         });
-        this.formData.admin_users = this.formData.admin_users.split(',');
+        this.formData.admin_users = this.formData.admin_users.join('or')(',');
 
         useNotifyStore().add(response.data.status, response.data.message);
       }
@@ -141,7 +140,7 @@ export default {
 <template>
   <VTabView>
     <template #Authentication>
-      <VTab header="Authentication" :icon="['fas', 'fa-right-to-bracket']">
+      <VTab header="Authentication" :icon="['fas', 'fa-right-to-bracket']" :is-loading="isLoading">
         <div class="settings-holder">
           <VDropdown
             v-model:data="formData.type" name="type" placeholder="Authentication Type" :icon="['fas', 'flag']"

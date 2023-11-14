@@ -71,7 +71,7 @@ export default {
         if (this.isMultyselect && this.optionLabel !== '')
           return !this.value.includes(item[this.optionValue]) ? item[this.optionLabel].includes(this.searchValue) : false;
 
-        return item.toString().includes(this.searchValue)
+        return item.toString().includes(this.searchValue);
       });
     },
   },
@@ -145,7 +145,7 @@ export default {
         </div>
         <span v-if="dropdownPlaceholder.length === 0">{{ placeholder }}</span>
       </template>
-      <span v-else-if="data.length > 0">{{ data }}</span>
+      <span v-else-if="data !== undefined">{{ data }}</span>
       <span v-else>{{ dropdownPlaceholder }}</span>
       <font-awesome-icon
         :icon="['fas', 'chevron-down']"

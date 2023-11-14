@@ -10,12 +10,19 @@ export default {
       type: Array,
       default: () => [],
     },
+    isLoading: {
+      type: Boolean,
+      default: true,
+    },
   },
 };
 </script>
 
 <template>
   <div :class="tab - holder">
+    <div v-if="isLoading" class="loader">
+      <font-awesome-icon :icon="['fas', 'spinner']" spin />
+    </div>
     <slot />
   </div>
 </template>
