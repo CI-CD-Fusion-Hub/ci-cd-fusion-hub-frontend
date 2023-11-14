@@ -168,10 +168,10 @@ export default {
   <div>
     <VTabView>
       <template #Pipelines>
-        <VTab header="Pipelines" :icon="['fas', 'sitemap']">
+        <VTab header="Pipelines" :icon="['fas', 'sitemap']" :is-loading="isLoading">
           <VTable
-            :table-data="role.pipelines" :show-row-index="true" :is-loading="isLoading" :pagination="true"
-            :page_size="20"
+            :table-data="role.pipelines" :show-row-index="true" :pagination="true"
+            :page_size="20" :is-loading="false"
           >
             <VColumn header="Name" value="name" />
             <VColumn header="Created Date" value="created_ts" />
@@ -201,10 +201,10 @@ export default {
         </VTab>
       </template>
       <template #Members>
-        <VTab header="Members" :icon="['fas', 'users']">
+        <VTab header="Members" :icon="['fas', 'users']" :is-loading="isLoading">
           <VTable
-            :table-data="role.members" :show-row-index="true" :is-loading="isLoading" :pagination="true"
-            :page_size="20"
+            :table-data="role.members" :show-row-index="true" :pagination="true"
+            :page_size="20" :is-loading="false"
           >
             <VColumn header="First Name" value="first_name" />
             <VColumn header="Last Name" value="last_name" />

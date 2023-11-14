@@ -112,8 +112,8 @@ export default {
   <div>
     <VTabView>
       <template #Pipelines>
-        <VTab header="Pipelines" :icon="['fas', 'sitemap']">
-          <VTable :table-data="user.pipelines" :show-row-index="true" :is-loading="isLoading" :pagination="true">
+        <VTab header="Pipelines" :icon="['fas', 'sitemap']" :is-loading="isLoading">
+          <VTable :table-data="user.pipelines" :show-row-index="true" :is-loading="false" :pagination="true">
             <VColumn header="Name" value="name" />
             <VColumn header="Application" value="application_id">
               <template #body="{ row }">
@@ -138,8 +138,8 @@ export default {
         </VTab>
       </template>
       <template #Roles>
-        <VTab header="Roles" :icon="['fas', 'users']">
-          <VTable :table-data="user.roles" :show-row-index="true" :is-loading="isLoading" :pagination="true">
+        <VTab header="Roles" :icon="['fas', 'users']" :is-loading="isLoading">
+          <VTable :table-data="user.roles" :show-row-index="true" :is-loading="false" :pagination="true">
             <VColumn header="Name" value="name" />
             <VColumn header="Description" value="description" />
             <VColumn header="Actions" value="actions">

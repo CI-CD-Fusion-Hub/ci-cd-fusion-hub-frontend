@@ -122,7 +122,7 @@ export default {
           url: `${this.backendUrl}/auth_method`,
           data: this.formData,
         });
-        this.formData.admin_users = this.formData.admin_users.join('or')(',');
+        this.formData.admin_users = this.formData.admin_users.join(',');
 
         useNotifyStore().add(response.data.status, response.data.message);
       }
