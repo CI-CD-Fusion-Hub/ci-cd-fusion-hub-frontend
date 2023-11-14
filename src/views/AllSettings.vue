@@ -31,7 +31,7 @@ export default {
           cas_service_url: undefined,
           cas_server_url: undefined,
           cas_version: undefined,
-          cas_verify_ssl: undefined,
+          cas_verify_ssl: false,
           adds_tenant_id: undefined,
           adds_client_id: undefined,
           adds_client_secret: undefined,
@@ -106,7 +106,7 @@ export default {
         this.isBtnLoading = true;
         this.isLoading = false;
         const isValid = await this.v$.$validate();
-        this.formData.admin_users = this.formData.admin_users.split(',');
+        
 
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
@@ -117,16 +117,17 @@ export default {
           return;
         }
 
+        this.formData.admin_users = this.formData.admin_users.split(',');
         const response = await this.axios({
           method: 'post',
           url: `${this.backendUrl}/auth_method`,
           data: this.formData,
         });
+        this.formData.admin_users = this.formData.admin_users.split(',');
 
         useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
-        console.log(error);
         useNotifyStore().add('error', 'Error loading data!');
       }
 
@@ -157,11 +158,11 @@ export default {
             />
             <VDropdown
               v-model:data="formData.properties.cas_version" name="cas_version" placeholder="Version" :icon="['fas', 'flag']"
-              :options="['3', '2']"
+              :options="[3, 2]"
             />
             <VDropdown
               v-model:data="formData.properties.cas_verify_ssl" name="cas_verify_ssl" placeholder="Verify SSL" :icon="['fas', 'flag']"
-              :options="['true', 'false']"
+              :options="[true, false]"
             />
             <VTextInput
               v-model:data="formData.admin_users" type="text" name="cas_admin_users" placeholder="Admin users split by comma"

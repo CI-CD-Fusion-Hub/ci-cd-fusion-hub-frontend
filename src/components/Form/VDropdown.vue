@@ -71,7 +71,7 @@ export default {
         if (this.isMultyselect && this.optionLabel !== '')
           return !this.value.includes(item[this.optionValue]) ? item[this.optionLabel].includes(this.searchValue) : false;
 
-        return item.includes(this.searchValue);
+        return item.toString().includes(this.searchValue)
       });
     },
   },
@@ -80,7 +80,6 @@ export default {
       this.isOpen = !this.isOpen;
     },
     selectValue(item) {
-      console.log(`Selected item: ${item}`);
       const selectedValue = this.optionLabel && this.optionValue ? item[this.optionValue] : item;
       const selectedLabel = item;
 
@@ -101,12 +100,9 @@ export default {
         return item !== e;
       });
 
-      console.log(this.value);
       this.value = this.value.filter((item) => {
-        console.log(item, (e[this.optionValue] || e));
         return item !== (e[this.optionValue] || e);
       });
-      console.log(this.value);
     },
     getPlaceHolder(item) {
       const label = this.options.filter((e) => {
