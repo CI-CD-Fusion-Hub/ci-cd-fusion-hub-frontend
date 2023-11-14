@@ -57,7 +57,7 @@ export default {
     return {
       isOpen: false,
       dropdownPlaceholder: this.isMultyselect ? this.data : this.placeholder,
-      value: [],
+      value: this.data.length > 0 ? this.data : [],
       searchValue: '',
     };
   },
@@ -80,17 +80,8 @@ export default {
       this.isOpen = !this.isOpen;
     },
     selectValue(item) {
-      let selectedValue = '';
-      let selectedLabel = '';
-
-      if (this.optionLabel && this.optionValue) {
-        selectedValue = item[this.optionValue];
-        selectedLabel = item;
-      }
-      else {
-        selectedValue = item;
-        selectedLabel = item;
-      }
+      const selectedValue = this.optionLabel && this.optionValue ? item[this.optionValue] : item;
+      const selectedLabel = item;
 
       if (this.isMultyselect) {
         this.value.push(selectedValue);
@@ -108,22 +99,17 @@ export default {
       this.dropdownPlaceholder = this.dropdownPlaceholder.filter((item) => {
         return item !== e;
       });
+
       this.value = this.value.filter((item) => {
-        return item !== e.id;
+        return item !== (e.id || e);
       });
     },
-    loadDropdownPlaceholder(e) {
-      if (!this.options)
-        return this.placeholder;
-
-      const placeholder = this.options.filter((item) => {
-        return item[this.optionLabel] === e[this.optionLabel];
+    getPlaceHolder(item) {
+      const label = this.options.filter((e) => {
+        return item === e[this.optionValue];
       });
 
-      if (placeholder.length === 0)
-        return this.placeholder;
-
-      return this.placeholder;
+      return label[0][this.optionLabel];
     },
   },
 };
@@ -150,7 +136,7 @@ export default {
           :key="item"
           class="dropdown-tag"
         >
-          <span v-if="optionLabel">{{ loadDropdownPlaceholder(item) }}</span>
+          <span v-if="optionLabel">{{ item[optionLabel] || getPlaceHolder(item) }}</span>
           <span v-else>{{ item }}</span>
           <font-awesome-icon
             :icon="['fas', 'xmark']"
