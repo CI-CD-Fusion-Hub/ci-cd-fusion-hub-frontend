@@ -112,20 +112,16 @@ export default {
         return item !== e.id;
       });
     },
-    loadDropdownPlaceholder(e){
+    loadDropdownPlaceholder(e) {
       if (!this.options)
         return this.placeholder;
-      
-      let placeholder = this.options.filter((item) => {
-        return item[this.optionLabel] == e[this.optionLabel]
-      });
-      
-      if(placeholder.length === 0){
-        
-      }
+
+      // const placeholder = this.options.filter((item) => {
+      //   return item[this.optionLabel] === e[this.optionLabel];
+      // });
 
       return this.placeholder;
-    }
+    },
   },
 };
 </script>

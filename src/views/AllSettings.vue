@@ -26,7 +26,7 @@ export default {
       backendUrl: import.meta.env.VITE_backendUrl,
       formData: {
         type: undefined,
-        admin_users: "",
+        admin_users: '',
         properties: {
           cas_service_url: undefined,
           cas_server_url: undefined,
@@ -38,10 +38,10 @@ export default {
           adds_scope: undefined,
         },
       },
-      adds_scopes:[{
+      adds_scopes: [{
         key: 'OpenID',
         value: 'https://graph.microsoft.com/.default',
-      }]
+      }],
     };
   },
   validations() {
@@ -93,7 +93,7 @@ export default {
           url: `${this.backendUrl}/auth_method`,
         });
 
-        Object.assign(this.formData, response.data.data)
+        Object.assign(this.formData, response.data.data);
       }
       catch (error) {
         useNotifyStore().add('error', 'Error loading data!');
@@ -106,7 +106,7 @@ export default {
         this.isBtnLoading = true;
         this.isLoading = false;
         const isValid = await this.v$.$validate();
-        this.formData.admin_users = this.formData.admin_users.split(',')
+        this.formData.admin_users = this.formData.admin_users.split(',');
 
         if (isValid === false) {
           this.v$.formData.$errors.forEach((e) => {
@@ -120,13 +120,13 @@ export default {
         const response = await this.axios({
           method: 'post',
           url: `${this.backendUrl}/auth_method`,
-          data: this.formData
+          data: this.formData,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
-        console.log(error)
+        console.log(error);
         useNotifyStore().add('error', 'Error loading data!');
       }
 
@@ -189,7 +189,7 @@ export default {
               v-model:data="formData.properties.adds_scope" name="adds_scope" placeholder="Scope" :icon="['fas', 'flag']" :options="adds_scopes" option-label="key" option-value="value" :is-multyselect="true"
             />
           </template>
-          <VButton :icon="['fas', 'save']" @on-click="sendData" :isLoading="isBtnLoading">
+          <VButton :icon="['fas', 'save']" :is-loading="isBtnLoading" @on-click="sendData">
             Save
           </VButton>
         </div>
