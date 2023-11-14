@@ -39,7 +39,7 @@ export default {
         },
       },
       adds_scopes: [{
-        key: 'OpenID',
+        id: 'OpenID Connect',
         value: 'https://graph.microsoft.com/.default',
       }],
     };
@@ -186,7 +186,7 @@ export default {
               :icon="['fas', 'fa-user-tag']"
             />
             <VDropdown
-              v-model:data="formData.properties.adds_scope" name="adds_scope" placeholder="Scope" :icon="['fas', 'flag']" :options="adds_scopes" option-label="key" option-value="value" :is-multyselect="true"
+              v-model:data="formData.properties.adds_scope" name="adds_scope" placeholder="Scope" :icon="['fas', 'flag']" :options="adds_scopes" option-label="id" option-value="value" :is-multyselect="true"
             />
           </template>
           <VButton :icon="['fas', 'save']" :is-loading="isBtnLoading" @on-click="sendData">
