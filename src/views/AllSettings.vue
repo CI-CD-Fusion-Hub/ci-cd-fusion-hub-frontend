@@ -22,17 +22,26 @@ export default {
   data() {
     return {
       isLoading: true,
+      isBtnLoading: false,
       backendUrl: import.meta.env.VITE_backendUrl,
       formData: {
         type: undefined,
-        cas_service_url: undefined,
-        cas_server_url: undefined,
-        cas_version: undefined,
-        cas_verify_ssl: undefined,
-        adds_tennat_name: undefined,
-        adds_client_id: undefined,
-        adds_client_secret: undefined,
+        admin_users: "",
+        properties: {
+          cas_service_url: undefined,
+          cas_server_url: undefined,
+          cas_version: undefined,
+          cas_verify_ssl: undefined,
+          adds_tenant_id: undefined,
+          adds_client_id: undefined,
+          adds_client_secret: undefined,
+          adds_scope: undefined,
+        },
       },
+      adds_scopes:[{
+        key: 'OpenID',
+        value: 'https://graph.microsoft.com/.default',
+      }]
     };
   },
   validations() {
@@ -41,29 +50,34 @@ export default {
         type: {
           required: helpers.withMessage('Type field cannot be empty.', required),
         },
-        cas_service_url: {
-          requiredIftype: helpers.withMessage('Service URL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
-          url,
-        },
-        cas_server_url: {
-          requiredIftype: helpers.withMessage('Server URL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
-          url,
-        },
-        cas_version: {
-          requiredIftype: helpers.withMessage('Version field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
-          numeric,
-        },
-        cas_verify_ssl: {
-          required: helpers.withMessage('Verify SSL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
-        },
-        adds_tennat_name: {
-          requiredIftype: helpers.withMessage('Tennant Name field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
-        },
-        adds_client_id: {
-          requiredIftype: helpers.withMessage('Client ID cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
-        },
-        adds_client_secret: {
-          requiredIftype: helpers.withMessage('Client Secret field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+        properties: {
+          cas_service_url: {
+            requiredIftype: helpers.withMessage('Service URL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
+            url,
+          },
+          cas_server_url: {
+            requiredIftype: helpers.withMessage('Server URL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
+            url,
+          },
+          cas_version: {
+            requiredIftype: helpers.withMessage('Version field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
+            numeric,
+          },
+          cas_verify_ssl: {
+            required: helpers.withMessage('Verify SSL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
+          },
+          adds_tenant_id: {
+            requiredIftype: helpers.withMessage('Tennant Name field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+          },
+          adds_client_id: {
+            requiredIftype: helpers.withMessage('Client ID cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+          },
+          adds_client_secret: {
+            requiredIftype: helpers.withMessage('Client Secret field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+          },
+          adds_scope: {
+            requiredIftype: helpers.withMessage('Scope field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+          },
         },
       },
     };
@@ -76,16 +90,48 @@ export default {
       try {
         const response = await this.axios({
           method: 'get',
-          url: `${this.backendUrl}/user`,
+          url: `${this.backendUrl}/auth_method`,
         });
 
-        this.formData = response.data.data;
+        Object.assign(this.formData, response.data.data)
       }
       catch (error) {
         useNotifyStore().add('error', 'Error loading data!');
       }
 
       this.isLoading = false;
+    },
+    async sendData() {
+      try {
+        this.isBtnLoading = true;
+        this.isLoading = false;
+        const isValid = await this.v$.$validate();
+        this.formData.admin_users = this.formData.admin_users.split(',')
+
+        if (isValid === false) {
+          this.v$.formData.$errors.forEach((e) => {
+            useNotifyStore().add('error', e.$message);
+          });
+          this.isBtnLoading = false;
+          this.isLoading = false;
+          return;
+        }
+
+        const response = await this.axios({
+          method: 'post',
+          url: `${this.backendUrl}/auth_method`,
+          data: this.formData
+        });
+
+        useNotifyStore().add(response.data.status, response.data.message);
+      }
+      catch (error) {
+        console.log(error)
+        useNotifyStore().add('error', 'Error loading data!');
+      }
+
+      this.isLoading = false;
+      this.isBtnLoading = false;
     },
   },
 };
@@ -102,37 +148,48 @@ export default {
           />
           <template v-if="formData.type === 'CAS'">
             <VTextInput
-              v-model:data="formData.cas_service_url" type="text" name="cas_service_url" placeholder="Service URL"
+              v-model:data="formData.properties.cas_service_url" type="text" name="cas_service_url" placeholder="Service URL"
               :icon="['fas', 'fa-user-tag']"
             />
             <VTextInput
-              v-model:data="formData.cas_server_url" type="text" name="cas_server_url" placeholder="Server URL"
+              v-model:data="formData.properties.cas_server_url" type="text" name="cas_server_url" placeholder="Server URL"
               :icon="['fas', 'fa-user-tag']"
             />
             <VDropdown
-              v-model:data="formData.cas_version" name="cas_version" placeholder="Version" :icon="['fas', 'flag']"
+              v-model:data="formData.properties.cas_version" name="cas_version" placeholder="Version" :icon="['fas', 'flag']"
               :options="['3', '2']"
             />
             <VDropdown
-              v-model:data="formData.cas_verify_ssl" name="cas_verify_ssl" placeholder="Verify SSL" :icon="['fas', 'flag']"
+              v-model:data="formData.properties.cas_verify_ssl" name="cas_verify_ssl" placeholder="Verify SSL" :icon="['fas', 'flag']"
               :options="['true', 'false']"
+            />
+            <VTextInput
+              v-model:data="formData.admin_users" type="text" name="cas_admin_users" placeholder="Admin users split by comma"
+              :icon="['fas', 'fa-user-tag']"
             />
           </template>
           <template v-else-if="formData.type === 'ADDS'">
             <VTextInput
-              v-model:data="formData.adds_tennat_name" type="text" name="adds_tennat_name" placeholder="Tennant Name"
+              v-model:data="formData.properties.adds_tenant_id" type="text" name="adds_tennat_id" placeholder="Tennant ID"
               :icon="['fas', 'fa-user-tag']"
             />
             <VTextInput
-              v-model:data="formData.adds_client_id" type="text" name="adds_client_id" placeholder="Client ID"
+              v-model:data="formData.properties.adds_client_id" type="text" name="adds_client_id" placeholder="Client ID"
               :icon="['fas', 'fa-user-tag']"
             />
             <VTextInput
-              v-model:data="formData.adds_client_secret" type="text" name="adds_client_secret" placeholder="Client Secret"
+              v-model:data="formData.properties.adds_client_secret" type="text" name="adds_client_secret" placeholder="Client Secret"
               :icon="['fas', 'fa-user-tag']"
+            />
+            <VTextInput
+              v-model:data="formData.admin_users" type="text" name="adds_admin_users" placeholder="Admin users split by comma"
+              :icon="['fas', 'fa-user-tag']"
+            />
+            <VDropdown
+              v-model:data="formData.properties.adds_scope" name="adds_scope" placeholder="Scope" :icon="['fas', 'flag']" :options="adds_scopes" option-label="key" option-value="value" :is-multyselect="true"
             />
           </template>
-          <VButton :icon="['fas', 'save']">
+          <VButton :icon="['fas', 'save']" @on-click="sendData" :isLoading="isBtnLoading">
             Save
           </VButton>
         </div>

@@ -74,6 +74,20 @@ export default {
 
       this.isBtnLoading = false;
     },
+    async checkAuthMethod(){
+      const response = await this.axios({
+        method: 'get',
+        url: `${this.backendUrl}/login/method`,
+        data: this.formData,
+      });
+
+      if (!response.data.data) {
+        window.location.href = `${this.backendUrl}/login`;
+      }
+    }
+  },
+  async created() {
+    this.checkAuthMethod();
   },
 };
 </script>

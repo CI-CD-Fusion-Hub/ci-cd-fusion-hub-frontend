@@ -56,7 +56,7 @@ export default {
   data() {
     return {
       isOpen: false,
-      dropdownPlaceholder: this.isMultyselect ? [] : this.placeholder,
+      dropdownPlaceholder: this.isMultyselect ? this.data : this.placeholder,
       value: [],
       searchValue: '',
     };
@@ -112,6 +112,20 @@ export default {
         return item !== e.id;
       });
     },
+    loadDropdownPlaceholder(e){
+      if (!this.options)
+        return this.placeholder;
+      
+      let placeholder = this.options.filter((item) => {
+        return item[this.optionLabel] == e[this.optionLabel]
+      });
+      
+      if(placeholder.length === 0){
+        
+      }
+
+      return this.placeholder;
+    }
   },
 };
 </script>
@@ -137,7 +151,7 @@ export default {
           :key="item"
           class="dropdown-tag"
         >
-          <span v-if="optionLabel">{{ item[optionLabel] }}</span>
+          <span v-if="optionLabel">{{ loadDropdownPlaceholder(item) }}</span>
           <span v-else>{{ item }}</span>
           <font-awesome-icon
             :icon="['fas', 'xmark']"
@@ -146,7 +160,7 @@ export default {
         </div>
         <span v-if="dropdownPlaceholder.length === 0">{{ placeholder }}</span>
       </template>
-      <span v-else-if="data">{{ data }}</span>
+      <span v-else-if="data.length > 0">{{ data }}</span>
       <span v-else>{{ dropdownPlaceholder }}</span>
       <font-awesome-icon
         :icon="['fas', 'chevron-down']"

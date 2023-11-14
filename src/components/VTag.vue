@@ -65,11 +65,13 @@ export default {
 .tag.User,
 .tag.pending,
 .tag.skipped,
-.tag.created {
+.tag.created,
+.tag.null {
   background-color: gray;
 }
 
-.tag.cancelled {
+.tag.cancelled,
+.tag.canceled {
   text-decoration: line-through;
 }
 </style>
