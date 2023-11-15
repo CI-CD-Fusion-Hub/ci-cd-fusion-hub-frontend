@@ -101,7 +101,6 @@ export default {
     <div class="login_form">
       <div class="logo_holder" />
       <h1>CI/CD Fusion Hub</h1>
-      <p>Signin to your Account</p>
       <VTextInput
         v-model:data="formData.email"
         name="email"
@@ -150,7 +149,7 @@ export default {
 }
 
 .login_holder h1 {
-  margin: 0;
+  margin: 0 0 30px 0;
   text-align: center;
   font-family: monospace;
   font-size: 30px;
