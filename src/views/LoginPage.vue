@@ -100,7 +100,7 @@ export default {
   <div class="login_holder">
     <div class="login_form">
       <div class="logo_holder" />
-      <h1>Fusion Hub</h1>
+      <h1>CI/CD Fusion Hub</h1>
       <p>Signin to your Account</p>
       <VTextInput
         v-model:data="formData.email"
