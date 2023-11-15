@@ -111,17 +111,22 @@ export default {
           return;
         }
 
-        this.formData.admin_users = this.formData.admin_users.split(',');
+        if (this.formData.type !== 'Local' && !Array.isArray(this.formData.admin_users))
+          this.formData.admin_users = this.formData.admin_users.split(',');
+
         const response = await this.axios({
           method: 'post',
           url: `${this.backendUrl}/auth_method`,
           data: this.formData,
         });
-        this.formData.admin_users = this.formData.admin_users.join(',');
+
+        if (this.formData.type !== 'Local')
+          this.formData.admin_users = this.formData.admin_users.join(',');
 
         useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
+        console.log(error)
         useNotifyStore().add('error', 'Error loading data!');
       }
 
@@ -161,7 +166,7 @@ export default {
           </template>
           <template v-else-if="formData.type === 'ADDS'">
             <VTextInput
-              v-model:data="formData.properties.adds_tenant_id" type="text" name="adds_tennat_id" placeholder="Tennant ID"
+              v-model:data="formData.properties.adds_tenant_id" type="text" name="adds_tenant_id" placeholder="Tennant ID"
               :icon="['fas', 'fa-user-tag']"
             />
             <VTextInput

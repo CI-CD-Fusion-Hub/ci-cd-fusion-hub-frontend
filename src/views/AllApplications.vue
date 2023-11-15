@@ -258,7 +258,7 @@ export default {
       />
       <VTextInput
         v-model:data="formData.auth_pass" type="auth_pass" name="auth_pass" placeholder="Token/Password"
-        :icon="['fas', 'fa-user-tag']"
+        :icon="['fas', 'fa-user-tag']" tooltipPos="left" tooltipText="This field is for one-time entry. Once submitted, the information entered here will no longer be visible."
       />
       <VTextInput
         v-model:data="formData.base_url" name="base_url" type="url" placeholder="API Url"
@@ -289,7 +289,7 @@ export default {
       />
       <VTextInput
         v-model:data="formData.auth_pass" type="auth_pass" name="auth_pass" placeholder="Token/Password"
-        :icon="['fas', 'fa-user-tag']"
+        :icon="['fas', 'fa-user-tag']" tooltipPos="left" tooltipText="This field is for one-time entry. Once saved, the information entered here will no longer be visible."
       />
       <VTextInput v-model:data="formData.base_url" name="base_url" placeholder="API Url" :icon="['fas', 'fa-user-tag']" />
       <VDropdown
