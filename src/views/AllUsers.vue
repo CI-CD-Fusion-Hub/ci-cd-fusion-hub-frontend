@@ -222,7 +222,7 @@ export default {
             <VButton :icon="['fas', 'pen-to-square']" tooltip-text="Edit" @on-click="showEditModal(row)" />
             <VButton
               :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
-              @on-click="deleteData(row)"
+              @on-click="deleteData(row.id)"
             />
           </VButtonSet>
         </template>
