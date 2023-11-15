@@ -178,13 +178,13 @@ export default {
   padding: 0 30px;
 }
 
-.input-holder {
+.login_form .input-holder {
   border: solid 1px white;
   overflow: hidden;
   min-width: auto;
 }
 
-.login_form .btn-holder > button {
+.login_form button {
   border: solid 1px #f3fffe;
 }
 </style>

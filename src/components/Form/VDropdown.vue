@@ -204,7 +204,6 @@ export default {
   border-radius: 5px;
   position: relative;
   margin-bottom: 10px;
-  border: solid 1px white;
 }
 
 .dropdown-holder svg {
