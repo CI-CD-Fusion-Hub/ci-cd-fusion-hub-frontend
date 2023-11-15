@@ -99,7 +99,7 @@ export default {
 <template>
   <div class="login_holder">
     <div class="login_form">
-      <div class="logo_holder"><img src="test.png" /></div>
+      <div class="logo_holder"></div>
       <h1>Fusion Hub</h1>
       <p>Signin to your Account</p>
       <VTextInput
@@ -137,8 +137,11 @@ export default {
 }
 
 .logo_holder {
-  display: flex;
-  justify-content: center;
+  width: 100px;
+  background-image: url(logo.png);
+  background-size: contain;
+  height: 83px;
+  margin: 0 auto 10px auto;
 }
 
 .logo_holder img{
@@ -172,7 +175,6 @@ export default {
   color: white;
   width: 20%;
   min-height: 350px;
-  /* height: 30vh; */
   padding: 0 30px;
 }
 
