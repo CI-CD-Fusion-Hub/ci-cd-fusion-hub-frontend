@@ -83,6 +83,9 @@ export default {
 
 <template>
   <aside class="aside_menu">
+    <div class="logo_container">
+      <div class="logo_holder"></div>
+    </div>
     <ul>
       <template
         v-for="route in asideMenuRoutes"
@@ -123,6 +126,22 @@ export default {
   left: 0;
   overflow-y: auto;
   box-shadow: 1px 0px 4px #404040;
+}
+
+.aside_menu .logo_container {
+  padding: 8px 0 14px 0;
+  border-bottom: solid px var(--main-bg-color);
+  box-shadow: 0 1px 1px var(--main-color-hover);
+  z-index: 3;
+  position: relative;
+}
+
+.aside_menu .logo_container .logo_holder {
+  width: 73px;
+  background-image: url(logo.png);
+  background-size: contain;
+  height: 60px;
+  margin: 0 auto;
 }
 
 .aside_menu ul {

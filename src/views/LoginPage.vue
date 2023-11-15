@@ -38,9 +38,9 @@ export default {
       },
     };
   },
-  // async created() {
-  //   this.checkAuthMethod();
-  // },
+  async created() {
+    this.checkAuthMethod();
+  },
   methods: {
     async login() {
       try {
