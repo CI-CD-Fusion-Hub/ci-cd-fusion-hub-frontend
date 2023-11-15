@@ -89,7 +89,7 @@ export default {
           window.location.href = `${this.backendUrl}/login`;
       }
       catch (error) {
-        console.log("Unable to get authentication method.")
+        console.log('Unable to get authentication method.');
       }
     },
   },
@@ -99,7 +99,7 @@ export default {
 <template>
   <div class="login_holder">
     <div class="login_form">
-      <div class="logo_holder"></div>
+      <div class="logo_holder" />
       <h1>Fusion Hub</h1>
       <p>Signin to your Account</p>
       <VTextInput

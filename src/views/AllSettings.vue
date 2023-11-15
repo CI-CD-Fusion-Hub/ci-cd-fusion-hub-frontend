@@ -31,13 +31,13 @@ export default {
           cas_server_url: undefined,
           cas_version: undefined,
           cas_verify_ssl: false,
-          adds_tenant_id: undefined,
-          adds_client_id: undefined,
-          adds_client_secret: undefined,
-          adds_scope: undefined,
+          aad_tenant_id: undefined,
+          aad_client_id: undefined,
+          aad_client_secret: undefined,
+          aad_scope: undefined,
         },
       },
-      adds_scopes: [{
+      aad_scopes: [{
         id: 'OpenID Connect',
         value: 'https://graph.microsoft.com/.default',
       }],
@@ -61,17 +61,17 @@ export default {
           cas_verify_ssl: {
             required: helpers.withMessage('Verify SSL field cannot be empty.', requiredIf(this.formData.type === 'CAS')),
           },
-          adds_tenant_id: {
-            requiredIftype: helpers.withMessage('Tennant Name field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+          aad_tenant_id: {
+            requiredIftype: helpers.withMessage('Tennant Name field cannot be empty.', requiredIf(this.formData.type === 'Azure AD')),
           },
-          adds_client_id: {
-            requiredIftype: helpers.withMessage('Client ID cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+          aad_client_id: {
+            requiredIftype: helpers.withMessage('Client ID cannot be empty.', requiredIf(this.formData.type === 'Azure AD')),
           },
-          adds_client_secret: {
-            requiredIftype: helpers.withMessage('Client Secret field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+          aad_client_secret: {
+            requiredIftype: helpers.withMessage('Client Secret field cannot be empty.', requiredIf(this.formData.type === 'Azure AD')),
           },
-          adds_scope: {
-            requiredIftype: helpers.withMessage('Scope field cannot be empty.', requiredIf(this.formData.type === 'ADDS')),
+          aad_scope: {
+            requiredIftype: helpers.withMessage('Scope field cannot be empty.', requiredIf(this.formData.type === 'Azure AD')),
           },
         },
       },
@@ -126,7 +126,7 @@ export default {
         useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
-        console.log(error)
+        console.log(error);
         useNotifyStore().add('error', 'Error loading data!');
       }
 
@@ -144,7 +144,7 @@ export default {
         <div class="settings-holder">
           <VDropdown
             v-model:data="formData.type" name="type" placeholder="Authentication Type" :icon="['fas', 'flag']"
-            :options="['Local', 'CAS', 'ADDS']"
+            :options="['Local', 'CAS', 'Azure AD']"
           />
           <template v-if="formData.type === 'CAS'">
             <VTextInput
@@ -164,25 +164,25 @@ export default {
               :icon="['fas', 'fa-user-tag']"
             />
           </template>
-          <template v-else-if="formData.type === 'ADDS'">
+          <template v-else-if="formData.type === 'Azure AD'">
             <VTextInput
-              v-model:data="formData.properties.adds_tenant_id" type="text" name="adds_tenant_id" placeholder="Tennant ID"
+              v-model:data="formData.properties.aad_tenant_id" type="text" name="aad_tenant_id" placeholder="Tennant ID"
               :icon="['fas', 'fa-user-tag']"
             />
             <VTextInput
-              v-model:data="formData.properties.adds_client_id" type="text" name="adds_client_id" placeholder="Client ID"
+              v-model:data="formData.properties.aad_client_id" type="text" name="aad_client_id" placeholder="Client ID"
               :icon="['fas', 'fa-user-tag']"
             />
             <VTextInput
-              v-model:data="formData.properties.adds_client_secret" type="text" name="adds_client_secret" placeholder="Client Secret"
+              v-model:data="formData.properties.aad_client_secret" type="text" name="aad_client_secret" placeholder="Client Secret"
               :icon="['fas', 'fa-user-tag']"
             />
             <VTextInput
-              v-model:data="formData.admin_users" type="text" name="adds_admin_users" placeholder="Admin users split by comma"
+              v-model:data="formData.admin_users" type="text" name="aad_admin_users" placeholder="Admin users split by comma"
               :icon="['fas', 'fa-user-tag']"
             />
             <VDropdown
-              v-model:data="formData.properties.adds_scope" name="adds_scope" placeholder="Scope" :icon="['fas', 'flag']" :options="adds_scopes" option-label="id" option-value="value" :is-multyselect="true"
+              v-model:data="formData.properties.aad_scope" name="aad_scope" placeholder="Scope" :icon="['fas', 'flag']" :options="aad_scopes" option-label="id" option-value="value" :is-multyselect="true"
             />
           </template>
           <VButton :icon="['fas', 'save']" :is-loading="isBtnLoading" @on-click="sendData">

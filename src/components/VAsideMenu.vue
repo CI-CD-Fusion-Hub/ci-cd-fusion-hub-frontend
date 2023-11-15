@@ -84,7 +84,7 @@ export default {
 <template>
   <aside class="aside_menu">
     <div class="logo_container">
-      <div class="logo_holder"></div>
+      <div class="logo_holder" />
     </div>
     <ul>
       <template
