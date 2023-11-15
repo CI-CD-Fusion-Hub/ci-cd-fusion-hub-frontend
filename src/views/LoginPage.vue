@@ -179,6 +179,7 @@ export default {
 .input-holder {
   border: solid 1px white;
   overflow: hidden;
+  min-width: auto;
 }
 
 .login_form .btn-holder > button {
