@@ -18,7 +18,7 @@ axios.interceptors.response.use(
     return {
       data: {
         status: 'error',
-        message: config.response.statusText || 'Unable to connect to backend service.',
+        message: config.response.data.message || 'Unable to connect to backend service.',
       },
     };
   },

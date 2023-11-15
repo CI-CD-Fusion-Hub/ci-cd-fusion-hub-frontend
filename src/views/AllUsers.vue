@@ -75,13 +75,13 @@ export default {
       },
     };
   },
+  computed: {
+    isLocalAuth() {
+      return useUserStore().authMethod === 'Local';
+    },
+  },
   async created() {
     this.loadData();
-  },
-  computed: {
-    isLocalAuth(){
-      return useUserStore().authMethod === 'Local'
-    }
   },
   methods: {
     async loadData() {
@@ -243,7 +243,8 @@ export default {
       />
       <VTextInput v-model:data="formData.email" name="email" placeholder="Email" :icon="['fas', 'fa-at']" />
       <VTextInput v-if="isLocalAuth" v-model:data="formData.password" type="password" name="password" placeholder="******" :icon="['fas', 'fa-key']" />
-      <VTextInput v-if="isLocalAuth"
+      <VTextInput
+        v-if="isLocalAuth"
         v-model:data="formData.confirm_password" type="password" name="confirm_password" placeholder="******"
         :icon="['fas', 'fa-key']"
       />
@@ -269,11 +270,13 @@ export default {
         :icon="['fas', 'fa-user-tag']"
       />
       <VTextInput v-model:data="formData.email" type="text" name="email" placeholder="Email" :icon="['fas', 'fa-at']" />
-      <VTextInput v-if="isLocalAuth"
+      <VTextInput
+        v-if="isLocalAuth"
         v-model:data="formData.password" type="password" name="password" placeholder="******"
         :icon="['fas', 'fa-key']"
       />
-      <VTextInput v-if="isLocalAuth"
+      <VTextInput
+        v-if="isLocalAuth"
         v-model:data="formData.confirm_password" type="password" name="confirm_password" placeholder="******"
         :icon="['fas', 'fa-key']"
       />
