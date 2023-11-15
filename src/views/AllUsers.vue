@@ -10,6 +10,7 @@ import VDropdown from '../components/Form/VDropdown.vue';
 import VTag from '../components/VTag.vue';
 import VColumn from '../components/VColumn.vue';
 import { useNotifyStore } from '../stores/notifications';
+import { useUserStore } from '../stores/user';
 
 export default {
   components: {
@@ -59,11 +60,11 @@ export default {
           email,
         },
         password: {
-          requiredIfid: helpers.withMessage('Password field cannot be empty.', requiredIf(!this.formData.id)),
+          requiredIfid: helpers.withMessage('Password field cannot be empty.', requiredIf(!this.formData.id && this.isLocalAuth)),
         },
         confirm_password: {
           sameAsPassword: sameAs(this.formData.password),
-          requiredIfid: helpers.withMessage('Confirm Password field cannot be empty.', requiredIf(this.formData.password)),
+          requiredIfid: helpers.withMessage('Confirm Password field cannot be empty.', requiredIf(this.formData.password && this.isLocalAuth)),
         },
         status: {
           requiredIfid: helpers.withMessage('Status field cannot be empty.', requiredIf(this.formData.id)),
@@ -76,6 +77,11 @@ export default {
   },
   async created() {
     this.loadData();
+  },
+  computed: {
+    isLocalAuth(){
+      return useUserStore().authMethod === 'Local'
+    }
   },
   methods: {
     async loadData() {
@@ -236,8 +242,8 @@ export default {
         :icon="['fas', 'fa-user-tag']"
       />
       <VTextInput v-model:data="formData.email" name="email" placeholder="Email" :icon="['fas', 'fa-at']" />
-      <VTextInput v-model:data="formData.password" type="password" name="password" placeholder="******" :icon="['fas', 'fa-key']" />
-      <VTextInput
+      <VTextInput v-if="isLocalAuth" v-model:data="formData.password" type="password" name="password" placeholder="******" :icon="['fas', 'fa-key']" />
+      <VTextInput v-if="isLocalAuth"
         v-model:data="formData.confirm_password" type="password" name="confirm_password" placeholder="******"
         :icon="['fas', 'fa-key']"
       />
@@ -263,11 +269,11 @@ export default {
         :icon="['fas', 'fa-user-tag']"
       />
       <VTextInput v-model:data="formData.email" type="text" name="email" placeholder="Email" :icon="['fas', 'fa-at']" />
-      <VTextInput
+      <VTextInput v-if="isLocalAuth"
         v-model:data="formData.password" type="password" name="password" placeholder="******"
         :icon="['fas', 'fa-key']"
       />
-      <VTextInput
+      <VTextInput v-if="isLocalAuth"
         v-model:data="formData.confirm_password" type="password" name="confirm_password" placeholder="******"
         :icon="['fas', 'fa-key']"
       />

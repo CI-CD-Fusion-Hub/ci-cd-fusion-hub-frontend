@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', {
       email: null,
       status: null,
       accessLevel: null,
+
     };
   },
   getters: {
@@ -29,6 +30,7 @@ export const useUserStore = defineStore('user', {
         this.email = response.data.data.email;
         this.status = response.data.data.status;
         this.accessLevel = response.data.data.access_level;
+        this.authMethod = response.data.data.auth_method;
       }
       catch (error) {
 

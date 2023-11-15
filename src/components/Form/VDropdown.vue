@@ -57,7 +57,7 @@ export default {
     return {
       isOpen: false,
       dropdownPlaceholder: this.isMultyselect ? this.data : this.placeholder,
-      value: this.data.length > 0 ? this.data : [],
+      value: this.data?.length > 0 ? this.data : [],
       searchValue: '',
     };
   },
@@ -145,7 +145,7 @@ export default {
         </div>
         <span v-if="dropdownPlaceholder.length === 0">{{ placeholder }}</span>
       </template>
-      <span v-else-if="data !== undefined && data.length > 0">{{ data }}</span>
+      <span v-else-if="data?.length > 0">{{ data }}</span>
       <span v-else>{{ dropdownPlaceholder }}</span>
       <font-awesome-icon
         :icon="['fas', 'chevron-down']"
