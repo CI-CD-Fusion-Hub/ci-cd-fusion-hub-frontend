@@ -129,7 +129,7 @@ export default {
 <style>
 .login_holder {
   display: flex;
-  background-image: url(background.png);
+  background-image: url('/background.png');
   height: 100vh;
   position: absolute;
   width: 100vw;
@@ -138,7 +138,7 @@ export default {
 
 .logo_holder {
   width: 100px;
-  background-image: url(logo.png);
+  background-image: url('/logo.png');
   background-size: contain;
   height: 83px;
   margin: 0 auto 10px auto;
