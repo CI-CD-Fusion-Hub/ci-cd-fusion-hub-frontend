@@ -138,7 +138,7 @@ export default {
 
 .aside_menu .logo_container .logo_holder {
   width: 73px;
-  background-image: url(logo.png);
+  background-image: url('/logo.png');
   background-size: contain;
   height: 60px;
   margin: 0 auto;
