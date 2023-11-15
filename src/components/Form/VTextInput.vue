@@ -58,7 +58,7 @@ export default {
 
 <style>
 .input-holder {
-  background-color: var(--main-color);
+  background-color: var(--main-color-hover);
   color: white;
   border-radius: 5px;
   position: relative;

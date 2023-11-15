@@ -38,9 +38,9 @@ export default {
       },
     };
   },
-  async created() {
-    this.checkAuthMethod();
-  },
+  // async created() {
+  //   this.checkAuthMethod();
+  // },
   methods: {
     async login() {
       try {
@@ -78,14 +78,19 @@ export default {
       this.isBtnLoading = false;
     },
     async checkAuthMethod() {
-      const response = await this.axios({
-        method: 'get',
-        url: `${this.backendUrl}/login/method`,
-        data: this.formData,
-      });
+      try {
+        const response = await this.axios({
+          method: 'get',
+          url: `${this.backendUrl}/login/method`,
+          data: this.formData,
+        });
 
-      if (!response.data.data)
-        window.location.href = `${this.backendUrl}/login`;
+        if (!response.data.data)
+          window.location.href = `${this.backendUrl}/login`;
+      }
+      catch (error) {
+        console.log("Unable to get authentication method.")
+      }
     },
   },
 };
@@ -94,6 +99,7 @@ export default {
 <template>
   <div class="login_holder">
     <div class="login_form">
+      <div class="logo_holder"><img src="test.png" /></div>
       <h1>Fusion Hub</h1>
       <p>Signin to your Account</p>
       <VTextInput
@@ -123,36 +129,59 @@ export default {
 <style>
 .login_holder {
   display: flex;
-  background-image: url('background.jpg');
+  background-image: url(background.png);
   height: 100vh;
   position: absolute;
   width: 100vw;
-  left: 0;
-  top: 0;
+  background-size: cover;
+}
+
+.logo_holder {
+  display: flex;
+  justify-content: center;
+}
+
+.logo_holder img{
+  width: 100px;
+  margin-bottom: 10px;
 }
 
 .login_holder h1 {
   margin: 0;
+  text-align: center;
+  font-family: monospace;
+  font-size: 30px;
 }
 
 .login_image {
   width: 70%;
   height: 100vh;
-  background-color: #fcfaf6;
+  background-color: #f3fffe;
   display: flex;
   justify-items: center;
   align-items: center;
   justify-content: center;
 }
+
 .login_form {
   display: flex;
   align-items: stretch;
   flex-flow: column;
   justify-content: center;
-  background-color: #3870ba91;
+  background-color: #0a2d5cde;
   color: white;
   width: 20%;
-  height: 100vh;
-  padding: 0 20px;
+  min-height: 350px;
+  /* height: 30vh; */
+  padding: 0 30px;
+}
+
+.input-holder {
+  border: solid 1px white;
+  overflow: hidden;
+}
+
+.login_form .btn-holder > button {
+  border: solid 1px #f3fffe;
 }
 </style>

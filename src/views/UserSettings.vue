@@ -52,7 +52,7 @@ export default {
 <template>
   <VTabView>
     <template #User>
-      <VTab header="User" :icon="['fas', 'user-gear']">
+      <VTab header="User" :icon="['fas', 'user-gear']" :is-loading="isLoading">
         <div class="settings-holder">
           <VTextInput
             v-model:data="formData.first_name" type="text" name="first_name" placeholder="First Name"

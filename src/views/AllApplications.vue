@@ -35,14 +35,14 @@ export default {
       backendUrl: import.meta.env.VITE_backendUrl,
       tableData: [],
       formData: {
-        id: null,
-        name: null,
-        auth_user: null,
-        auth_pass: null,
-        base_url: null,
-        type: null,
-        status: null,
-        regex_pattern: null,
+        id: undefined,
+        name: undefined,
+        auth_user: undefined,
+        auth_pass: undefined,
+        base_url: undefined,
+        type: undefined,
+        status: undefined,
+        regex_pattern: undefined,
       },
     };
   },
@@ -91,7 +91,7 @@ export default {
       this.isLoading = false;
     },
     clearForm() {
-      Object.keys(this.formData).forEach(key => (this.formData[key] = ''));
+      Object.keys(this.formData).forEach(key => (this.formData[key] = undefined));
     },
     showAddModal() {
       this.clearForm();

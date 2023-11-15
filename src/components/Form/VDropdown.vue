@@ -145,7 +145,7 @@ export default {
         </div>
         <span v-if="dropdownPlaceholder.length === 0">{{ placeholder }}</span>
       </template>
-      <span v-else-if="data !== undefined">{{ data }}</span>
+      <span v-else-if="data !== undefined && data.length > 0">{{ data }}</span>
       <span v-else>{{ dropdownPlaceholder }}</span>
       <font-awesome-icon
         :icon="['fas', 'chevron-down']"
@@ -199,11 +199,12 @@ export default {
 
 <style>
 .dropdown-holder {
-  background-color: var(--main-color);
+  background-color: var(--main-color-hover);
   color: white;
   border-radius: 5px;
   position: relative;
   margin-bottom: 10px;
+  border: solid 1px white;
 }
 
 .dropdown-holder svg {
@@ -244,7 +245,7 @@ export default {
 }
 
 .dropdown-holder ul a {
-  background-color: var(--main-color);
+  background-color: var(--main-color-hover);
   padding: 6px 15px;
   transition: background-color 300ms ease-in-out;
   display: flex;
@@ -253,12 +254,12 @@ export default {
 }
 .dropdown-holder ul a:hover,
 .dropdown-holder ul li.active a {
-  background-color: #4b5588;
+  background-color: var(--main-color);
 }
 
 .dropdown-holder div.is-visible-true ul{
   max-height: 200px;
-  border: solid 2px var(--main-color);
+  border: solid 2px var(--main-color-hover);
 }
 .dropdown-holder div.is-visible-false ul {
   max-height: 0;
@@ -275,7 +276,7 @@ export default {
 .dropdown-holder .input-holder {
   margin-bottom: 0;
   display: none;
-  border-bottom: solid 2px var(--main-bg-color);
+  border-bottom: solid 2px var(--main-color);
   border-radius: 0;
   gap: 10px;
 }

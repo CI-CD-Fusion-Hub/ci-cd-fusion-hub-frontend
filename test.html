@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Low-Poly Table Design</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #e6f7ff; /* Light blue background */
+  }
+
+  table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-image: linear-gradient(135deg, #b3d9ff 25%, transparent 25%), linear-gradient(225deg, #b3d9ff 25%, transparent 25%), linear-gradient(45deg, #b3d9ff 25%, transparent 25%), linear-gradient(315deg, #b3d9ff 25%, #e6f7ff 25%);
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    background-size: 16px 16px;
+    border: 1px solid #99ccff;
+  }
+
+  th, td {
+    padding: 10px;
+    border: 1px solid #99ccff;
+    text-align: left;
+  }
+
+  th {
+    background: #cce0ff; /* Darker blue for header */
+    color: #003366; /* Dark blue text for contrast */
+  }
+
+  tr:nth-child(even) {
+    background-image: linear-gradient(45deg, #d9e9ff 25%, transparent 25%), linear-gradient(135deg, #d9e9ff 25%, #e6f7ff 25%);
+    background-size: 16px 16px;
+  }
+</style>
+</head>
+<body>
+
+<table>
+  <tr>
+    <th>#</th>
+    <th>Name</th>
+    <th>Application</th>
+    <th>Actions</th>
+  </tr>
+  <!-- Repeat rows as needed -->
+  <tr>
+    <td>1</td>
+    <td>admin_panel</td>
+    <td>AlphaDevs-Gitlab</td>
+    <td>Edit View</td>
+  </tr>
+  <!-- Add more rows here -->
+</table>
+
+</body>
+</html>

@@ -65,7 +65,7 @@ export default {
 .modal-holder > div {
   padding: 20px;
   border-radius: var(--border-radius);
-  background-color: var(--main-bg-color);
+  background-color: var(--main-color);
   position: relative;
   width: 400px;
 }
@@ -86,12 +86,28 @@ export default {
   width: 30px;
   height: 30px;
   text-align: center;
+  border: solid 1px white;
 }
 
 .modal-holder .input-holder[tooltip-text]::after,
 .modal-holder .dropdown-holder[tooltip-text]::after{
-line-height: 16px;
-padding: 8px;
-width: 80%;
+  line-height: 16px;
+  padding: 8px;
+  width: 80%;
+}
+
+.modal-holder .btn-set-holder button {
+  border-top: solid 1px white;
+  border-bottom: solid 1px white;
+}
+.modal-holder .btn-set-holder .btn-holder:first-child button {
+  border-left: solid 1px white;
+}
+.modal-holder .btn-set-holder .btn-holder:last-child button {
+  border-right: solid 1px white;
+}
+
+.modal-container > .btn-holder button {
+  border: solid 1px white;
 }
 </style>
