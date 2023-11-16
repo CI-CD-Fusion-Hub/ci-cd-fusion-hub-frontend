@@ -221,7 +221,7 @@ export default {
       </VColumn>
       <VColumn v-if="$route.params.application !== 'Jenkins'" header="Stages" value="stages">
         <template #body="{ row }">
-          <VTag v-for="stage in row.stages" :key="stage" :value="stage.name" :type="stage.status" />
+          <VTag v-for="stage in row.stages" :key="stage" :value="stage.name || 'starting'" :type="stage.status" />
           <VTag v-if="row.stages.length === 0" type="cancelled" :icon="['fas', 'ghost']" tooltip-text="No Stages" />
         </template>
       </VColumn>
@@ -232,7 +232,7 @@ export default {
       </VColumn>
       <VColumn header="Status" value="status">
         <template #body="{ row }">
-          <VTag :value="row.status" :type="row.status" />
+          <VTag :value="row.status || 'running'" :type="row.status" />
         </template>
       </VColumn>
       <VColumn header="Actions" value="actions">

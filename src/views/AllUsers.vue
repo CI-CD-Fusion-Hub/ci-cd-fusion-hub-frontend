@@ -57,13 +57,13 @@ export default {
         },
         email: {
           required: helpers.withMessage('Email field cannot be empty.', required),
-          email,
+          email: helpers.withMessage('Please, use valid email.', email),
         },
         password: {
           requiredIfid: helpers.withMessage('Password field cannot be empty.', requiredIf(!this.formData.id && this.isLocalAuth)),
         },
         confirm_password: {
-          sameAsPassword: sameAs(this.formData.password),
+          sameAsPassword: helpers.withMessage('Confirm Password must be equal to the Password value.', sameAs(this.formData.password)),
           requiredIfid: helpers.withMessage('Confirm Password field cannot be empty.', requiredIf(this.formData.password && this.isLocalAuth)),
         },
         status: {

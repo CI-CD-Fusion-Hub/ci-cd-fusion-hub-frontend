@@ -58,7 +58,7 @@ export default {
       this.isLoading = false;
     },
     async showAddPipelineModal() {
-      this.clearForm()
+      this.clearForm();
       await this.getUnassignedPipelines();
       this.isAddModalPipelineVissible = true;
     },
@@ -113,7 +113,7 @@ export default {
       await this.loadData();
     },
     async showAddUserModal() {
-      this.clearForm()
+      this.clearForm();
       await this.getUnassignedUsers();
       this.isAddModalUserVissible = true;
     },

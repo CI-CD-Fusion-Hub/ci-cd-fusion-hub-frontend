@@ -32,7 +32,9 @@ export default {
   margin-right: 3px;
 }
 .tag.running,
-.tag.in-progress {
+.tag.in-progress,
+.tag.null,
+.tag.starting {
   background-color: #eeeb30;
   animation: fade 1.5s infinite;
   opacity: 1;
@@ -66,12 +68,13 @@ export default {
 .tag.pending,
 .tag.skipped,
 .tag.created,
-.tag.null {
+.tag.aborted {
   background-color: gray;
 }
 
 .tag.cancelled,
-.tag.canceled {
+.tag.canceled,
+.tag.aborted {
   text-decoration: line-through;
 }
 </style>

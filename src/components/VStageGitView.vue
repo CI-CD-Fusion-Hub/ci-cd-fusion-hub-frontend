@@ -20,6 +20,7 @@ export default {
         success: ['fas', 'check'],
         failed: ['fas', 'xmark'],
         running: ['fas', 'spinner'],
+        null: ['fas', 'spinner'],
         created: ['fas', 'pause'],
         pending: ['fas', 'pause'],
         canceled: ['fas', 'ban'],
@@ -40,6 +41,7 @@ export default {
     await this.refreshRunningBuild();
   },
   unmounted() {
+    console.log('LEAVE');
     Object.entries(this.interval).forEach((e) => {
       clearInterval(e);
     });
@@ -68,7 +70,7 @@ export default {
         this.stage_logs[id] = response.data.data;
         this.scrollToBottom();
 
-        if (response.data.data.status !== 'running' && response.data.data.status !== 'created' && id in this.interval) {
+        if (response.data.data.status !== 'running' && response.data.data.status !== 'created' && response.data.data.status !== 'in_progress' && id in this.interval) {
           console.log(`Clear Interval: ${response.data.data.name}`);
           clearInterval(this.interval[id]);
         }
@@ -82,7 +84,7 @@ export default {
         if (Object.keys(this.interval).length === 0)
           await this.loadStageLog(e.id);
 
-        if ((e.status === 'created' || e.status === 'running') && !(e.id in this.interval)) {
+        if ((e.status === 'created' || e.status === 'running' || e.status === null) && !(e.id in this.interval)) {
           this.interval[e.id] = setInterval(async () => {
             await this.loadStageLog(e.id);
           }, 3000);
@@ -90,13 +92,13 @@ export default {
       });
     },
     async refreshRunningBuild() {
-      if (this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created')
+      if (this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created' && this.buildInfo.status !== null)
         return;
 
       this.interval[this.buildInfo.id] = setInterval(async () => {
         await this.loadData();
 
-        if (this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created')
+        if (this.buildInfo.status !== 'running' && this.buildInfo.status !== 'created' && this.buildInfo.status !== null)
           clearInterval(this.interval[this.buildInfo.id]);
       }, 5000);
     },
@@ -125,8 +127,8 @@ export default {
     <nav class="stages_holder">
       <div v-for="stage in buildInfo.stages" :key="stage" class="stage">
         <VButton
-          :icon="stageIcons[stage.status]" :is-loading="stage.status === 'running' ? true : false"
-          :class="stage.status" :is-active="isStageActive(stage.name)" @on-click="changeStage(stage.name)"
+          :icon="stageIcons[stage.status]" :is-loading="stage.status === 'running' || stage.status === null ? true : false"
+          :class="stage.status || 'running'" :is-active="isStageActive(stage.name)" @on-click="changeStage(stage.name)"
         />
         <div class="stage_label">
           {{ stage.name }}
@@ -138,7 +140,7 @@ export default {
         <aside class="build_info_card">
           <div><b>Name:</b> {{ buildInfo.name }}</div>
           <div>
-            <b>Status:</b> <VTag :type="stage.status" :value="stage.status" />
+            <b>Status:</b> <VTag :type="stage.status || 'running'" :value="stage.status || 'running'" />
           </div>
           <div><b>Stage:</b> {{ stage.name }}</div>
           <div><b>Duration:</b> {{ formatSeconds(stage.duration) }}</div>
@@ -155,7 +157,7 @@ export default {
               <div class="text_holder">{{ line }}</div>
             </div>
             <div
-              v-if="stage.status === 'running'"
+              v-if="stage.status === 'running' || stage.status === null"
               class="loader_log"
             >
               <div class="text_holder">

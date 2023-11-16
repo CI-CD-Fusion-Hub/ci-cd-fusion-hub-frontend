@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     clearForm() {
-      this.formData = []
+      this.formData = [];
     },
     async loadData() {
       try {
@@ -80,7 +80,7 @@ export default {
           data: [this.$route.params.user_id],
         });
 
-        this.clearForm()
+        this.clearForm();
         useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
