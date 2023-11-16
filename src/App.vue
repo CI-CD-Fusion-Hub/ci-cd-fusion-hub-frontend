@@ -30,7 +30,7 @@ export default {
   overflow-x: hidden;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1024px) {
   aside + main {
     margin: 20px 20px 20px 220px;
   }

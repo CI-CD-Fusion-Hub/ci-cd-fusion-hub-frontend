@@ -192,7 +192,6 @@ table {
   padding: 15px;
   border-radius: var(--border-radius);
   font-size: 14px;
-  overflow: hidden;
   position: relative;
   margin-bottom: 10px;
   color: #3e4772;
@@ -204,7 +203,7 @@ thead {
 
 th,
 td {
-  padding: 5px 15px;
+  padding: 5px 2.5px;
   text-align: left;
 }
 
@@ -213,8 +212,7 @@ tbody tr:nth-child(odd) {
 }
 
 table .index_row {
-  max-width: 55px;
-  width: 30px;
+  padding: 5px 10px;
   text-align: center;
 }
 
@@ -241,5 +239,12 @@ table .empty_data {
 .table_search .input-holder {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+}
+
+@media only screen and (min-width: 1024px) {
+  th,
+  td {
+    padding: 5px 15px;
+  }
 }
 </style>

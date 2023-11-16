@@ -126,6 +126,18 @@ export default {
   overflow: visible;
   box-shadow: 1px 0px 4px #404040;
   z-index: 10;
+  flex-flow: column nowrap;
+  display: flex;
+}
+
+.aside_menu > ul {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+}
+
+.aside_menu > ul > li:last-child {
+  margin-top: auto;
 }
 
 .aside_menu .logo_container {
@@ -159,12 +171,6 @@ export default {
   background-color:var(--main-color-hover);
 }
 
-.aside_menu ul li:last-child {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-
 .aside_menu ul li span {
   display: none;
 }
@@ -181,7 +187,7 @@ export default {
   min-width: 20px;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1024px) {
   .aside_menu {
     width: 200px;
     overflow-x: hidden;

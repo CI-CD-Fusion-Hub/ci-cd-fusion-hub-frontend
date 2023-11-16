@@ -82,7 +82,7 @@ export default {
 .input-holder label {
   position: absolute;
   left: 0;
-  width: 100%;
+  width: calc(100% - 33px);
   padding-left: 33px;
   z-index: 2;
 }
