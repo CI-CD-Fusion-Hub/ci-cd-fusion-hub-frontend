@@ -28,8 +28,10 @@ export default {
       isAddModalUserVissible: false,
       backendUrl: import.meta.env.VITE_backendUrl,
       role: {},
-      formPipelineData: [],
-      formUserData: [],
+      formData: {
+        formPipelineData: undefined,
+        formUserData: undefined,
+      },
       pipelines: [],
       users: [],
     };
@@ -38,6 +40,9 @@ export default {
     this.loadData();
   },
   methods: {
+    clearForm() {
+      Object.keys(this.formData).forEach(key => (this.formData[key] = undefined));
+    },
     async loadData() {
       try {
         const response = await this.axios.get(
@@ -53,6 +58,7 @@ export default {
       this.isLoading = false;
     },
     async showAddPipelineModal() {
+      this.clearForm()
       await this.getUnassignedPipelines();
       this.isAddModalPipelineVissible = true;
     },
@@ -76,7 +82,7 @@ export default {
         const response = await this.axios({
           method: 'post',
           url: `${this.backendUrl}/access_roles/${this.$route.params.roleId}/pipelines`,
-          data: this.formPipelineData,
+          data: this.formData.formPipelineData,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
@@ -107,6 +113,7 @@ export default {
       await this.loadData();
     },
     async showAddUserModal() {
+      this.clearForm()
       await this.getUnassignedUsers();
       this.isAddModalUserVissible = true;
     },
@@ -130,7 +137,7 @@ export default {
         const response = await this.axios({
           method: 'post',
           url: `${this.backendUrl}/access_roles/${this.$route.params.roleId}/users`,
-          data: this.formUserData,
+          data: this.formData.formUserData,
         });
 
         useNotifyStore().add(response.data.status, response.data.message);
@@ -233,19 +240,19 @@ export default {
 
     <VModal v-model:isActive="isAddModalPipelineVissible">
       <VDropdown
-        v-model:data="formPipelineData" name="pipeline_id" placeholder="Pipelines" :icon="['fas', 'sitemap']"
+        v-model:data="formData.formPipelineData" name="pipeline_id" placeholder="Pipelines" :icon="['fas', 'sitemap']"
         :options="pipelines" :is-multyselect="true" option-label="name" option-value="id" :is-searchable="true"
       />
-      <VButton v-if="pipelines.length > 0 && formPipelineData.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataPipeline">
+      <VButton :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataPipeline">
         Add
       </VButton>
     </VModal>
     <VModal v-model:isActive="isAddModalUserVissible">
       <VDropdown
-        v-model:data="formUserData" name="user_id" placeholder="Users" :icon="['fas', 'sitemap']"
+        v-model:data="formData.formUserData" name="user_id" placeholder="Users" :icon="['fas', 'sitemap']"
         :options="users" :is-multyselect="true" option-label="email" option-value="id" :is-searchable="true"
       />
-      <VButton v-if="users.length > 0 && formUserData.length > 0" :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataUser">
+      <VButton :icon="['fas', 'plus']" :is-loading="isBtnLoading" @on-click="addDataUser">
         Add
       </VButton>
     </VModal>

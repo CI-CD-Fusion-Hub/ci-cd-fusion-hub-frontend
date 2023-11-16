@@ -114,39 +114,39 @@ export default {
       />
     </div>
     <table>
-        <div v-if="isLoading" class="loader">
-          <font-awesome-icon :icon="['fas', 'spinner']" spin />
-        </div>
-        <thead>
-          <tr>
-            <th v-if="showRowIndex" class="index_row">
-              #
-            </th>
-            <th v-for="el in get_columns" :key="el.props.header">
-              {{ el.props.header }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="get_page_items.length === 0">
-            <td colspan="100" class="empty_data">
-              <font-awesome-icon :icon="['fas', 'ghost']" /> No Data
-            </td>
-          </tr>
-          <tr v-for="(row, index) in get_page_items" :key="row">
-            <td v-if="showRowIndex" class="index_row">
-              {{ (index + 1) + pageSize * (get_active_page - 1) }}
-            </td>
-            <td v-for="el in get_columns" :key="`slot-${el.props?.header ?? ''}-${idx}`">
-              <template v-if="!el.children">
-                {{ row[el.props.value] ?? '' }}
-              </template>
-              <template v-else-if="el.children">
-                <component :is="vnode(el, row)" />
-              </template>
-            </td>
-          </tr>
-        </tbody>
+      <div v-if="isLoading" class="loader">
+        <font-awesome-icon :icon="['fas', 'spinner']" spin />
+      </div>
+      <thead>
+        <tr>
+          <th v-if="showRowIndex" class="index_row">
+            #
+          </th>
+          <th v-for="el in get_columns" :key="el.props.header">
+            {{ el.props.header }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-if="get_page_items.length === 0">
+          <td colspan="100" class="empty_data">
+            <font-awesome-icon :icon="['fas', 'ghost']" /> No Data
+          </td>
+        </tr>
+        <tr v-for="(row, index) in get_page_items" :key="row">
+          <td v-if="showRowIndex" class="index_row">
+            {{ (index + 1) + pageSize * (get_active_page - 1) }}
+          </td>
+          <td v-for="el in get_columns" :key="`slot-${el.props?.header ?? ''}-${idx}`">
+            <template v-if="!el.children">
+              {{ row[el.props.value] ?? '' }}
+            </template>
+            <template v-else-if="el.children">
+              <component :is="vnode(el, row)" />
+            </template>
+          </td>
+        </tr>
+      </tbody>
     </table>
     <nav v-if="pagination && total_pages > 1" class="pagination_holder">
       <VButton :icon="['fas', 'chevron-left']" tooltip-text="Prev" @on-click="change_page(get_active_page - 1)" />

@@ -36,6 +36,9 @@ export default {
     this.loadData();
   },
   methods: {
+    clearForm() {
+      this.formData = []
+    },
     async loadData() {
       try {
         const response = await this.axios.get(
@@ -77,6 +80,7 @@ export default {
           data: [this.$route.params.user_id],
         });
 
+        this.clearForm()
         useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
@@ -126,10 +130,6 @@ export default {
                   <VButton
                     :icon="['fas', 'eye']" :link-to="{ name: 'SinglePipeline', params: { application: row.application.type, pipeline_id: row.id } }"
                     tooltip-text="View" tooltip-pos="Top"
-                  />
-                  <VButton
-                    :icon="['fas', 'trash']" :is-loading="isBtnLoading" tooltip-text="Remove"
-                    @on-click="deleteDataPipeline(row.id)"
                   />
                 </VButtonSet>
               </template>

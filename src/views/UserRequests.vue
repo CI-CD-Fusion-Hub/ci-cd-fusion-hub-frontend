@@ -1,4 +1,6 @@
 <script>
+import { useVuelidate } from '@vuelidate/core';
+import { helpers, required } from '@vuelidate/validators';
 import VTable from '../components/VTable.vue';
 import VButton from '../components/VButton.vue';
 import VButtonSet from '../components/VButtonSet.vue';
@@ -20,6 +22,9 @@ export default {
     VTag,
     VColumn,
   },
+  setup() {
+    return { v$: useVuelidate() };
+  },
   data() {
     return {
       isLoading: true,
@@ -31,6 +36,19 @@ export default {
       formData: {
         id: undefined,
         pipelines: undefined,
+        message: undefined,
+      },
+    };
+  },
+  validations() {
+    return {
+      formData: {
+        pipelines: {
+          required: helpers.withMessage('Pipelines field cannot be empty.', required),
+        },
+        message: {
+          required: helpers.withMessage('Message field cannot be empty.', required),
+        },
       },
     };
   },
@@ -67,7 +85,6 @@ export default {
       this.formData.id = data.id;
       this.formData.pipelines = data.pipelines.map(item => item.name);
       this.formData.message = data.message;
-      this.formData.status = data.status;
       this.isEditModalVissible = true;
     },
     async getUnassignedPipelines() {
@@ -86,6 +103,16 @@ export default {
       try {
         this.isLoading = true;
         this.isBtnLoading = true;
+        const isValid = await this.v$.$validate();
+
+        if (!isValid) {
+          this.v$.formData.$errors.forEach((e) => {
+            useNotifyStore().add('error', e.$message);
+          });
+          this.isLoading = false;
+          this.isBtnLoading = false;
+          return;
+        }
 
         const response = await this.axios({
           method: 'post',

@@ -216,7 +216,7 @@ export default {
 
 .dropdown-holder > div > ul {
   transition: max-height 150ms ease-in-out;
-  overflow-y: scroll;
+  overflow-y: auto;
   border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
@@ -232,7 +232,7 @@ export default {
 }
 
 .dropdown-holder .drop-down-btn.is-multyselect-true {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .dropdown-holder .drop-down-btn svg:first-child {
