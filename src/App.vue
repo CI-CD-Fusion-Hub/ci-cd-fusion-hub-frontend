@@ -24,9 +24,15 @@ export default {
 
 <style>
  aside + main {
-  margin: 20px 20px 20px 220px;
+  margin: 20px 20px 20px 70px;
   position: relative;
   background-color: var(--main-bg-color);
   overflow-x: hidden;
+}
+
+@media only screen and (min-width: 768px) {
+  aside + main {
+    margin: 20px 20px 20px 220px;
+  }
 }
 </style>

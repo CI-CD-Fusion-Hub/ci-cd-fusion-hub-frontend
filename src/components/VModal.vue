@@ -110,4 +110,10 @@ export default {
 .modal-container > .btn-holder button {
   border: solid 1px white;
 }
+
+@media only screen and (max-width: 500px) {
+  .modal-holder > div {
+    width: 300px;
+  }
+}
 </style>

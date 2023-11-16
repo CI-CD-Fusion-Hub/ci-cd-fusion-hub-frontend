@@ -91,7 +91,7 @@ export default {
         v-for="route in asideMenuRoutes"
         :key="route"
       >
-        <li v-if="route.requiredAccessLevel.includes(userInfo.accessLevel)">
+        <li v-if="route.requiredAccessLevel.includes(userInfo.accessLevel)" :tooltip-text="route.label" tooltip-position="right">
           <router-link
             v-if="route.label !== 'Logout'"
             :to="route.path"
@@ -117,15 +117,15 @@ export default {
 
 <style>
 .aside_menu {
-  width: 200px;
   height: 100%;
   background-color: var(--main-color);
   color: #fff;
   position: fixed;
   top: 0;
   left: 0;
-  overflow-y: auto;
+  overflow: visible;
   box-shadow: 1px 0px 4px #404040;
+  z-index: 10;
 }
 
 .aside_menu .logo_container {
@@ -137,10 +137,10 @@ export default {
 }
 
 .aside_menu .logo_container .logo_holder {
-  width: 73px;
+  width: 44px;
   background-image: url('/logo.png');
   background-size: contain;
-  height: 60px;
+  height: 37px;
   margin: 0 auto;
 }
 
@@ -165,6 +165,10 @@ export default {
   width: 100%;
 }
 
+.aside_menu ul li span {
+  display: none;
+}
+
 .aside_menu a {
   text-decoration: none;
   color: #fff;
@@ -175,5 +179,21 @@ export default {
 }
 .aside_menu svg {
   min-width: 20px;
+}
+
+@media only screen and (min-width: 768px) {
+  .aside_menu {
+    width: 200px;
+    overflow-x: hidden;
+  }
+
+  .aside_menu ul li span {
+    display: inline-block;
+  }
+
+  .aside_menu .logo_container .logo_holder {
+    width: 73px;
+    height: 60px;
+  }
 }
 </style>

@@ -133,9 +133,10 @@ export default {
   position: absolute;
   width: 100vw;
   background-size: cover;
+  background-position: center center;
 }
 
-.logo_holder {
+.login_holder .logo_holder {
   width: 100px;
   background-image: url('/logo.png');
   background-size: contain;
@@ -143,7 +144,7 @@ export default {
   margin: 0 auto 10px auto;
 }
 
-.logo_holder img{
+.login_holder .logo_holder img{
   width: 100px;
   margin-bottom: 10px;
 }
@@ -155,7 +156,7 @@ export default {
   font-size: 30px;
 }
 
-.login_image {
+.login_holder .login_image {
   width: 70%;
   height: 100vh;
   background-color: #f3fffe;
@@ -165,25 +166,45 @@ export default {
   justify-content: center;
 }
 
-.login_form {
+.login_holder .login_form {
   display: flex;
   align-items: stretch;
   flex-flow: column;
   justify-content: center;
   background-color: #0a2d5cde;
   color: white;
-  width: 20%;
+  width: 100%;
   min-height: 350px;
   padding: 0 30px;
 }
 
-.login_form .input-holder {
+.login_holder .login_form .input-holder {
   border: solid 1px white;
   overflow: hidden;
   min-width: auto;
 }
 
-.login_form button {
+.login_holder .login_form button {
   border: solid 1px #f3fffe;
+}
+
+@media only screen and (min-width: 500px) {
+  .login_holder .login_form {
+    width: 40%;
+  }
+
+  .login_holder {
+    background-position: center center;
+  }
+}
+@media only screen and (min-width: 768px) {
+  .login_holder .login_form {
+    width: 35%;
+  }
+}
+@media only screen and (min-width: 1280px) {
+  .login_holder .login_form {
+    width: 20%;
+  }
 }
 </style>

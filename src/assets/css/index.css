@@ -144,8 +144,9 @@ code {
 
 [tooltip-position='right']::before {
     left: 100%;
-    top: 50%;
+    top: calc(50% - 2px);
     margin-left: 1px;
+    transform: rotate(90deg);
 }
 
 [tooltip-position='left']::after {
