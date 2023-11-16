@@ -42,4 +42,8 @@ export default {
 .tab-holder.active {
   display: inherit;
 }
+
+.tabs .loader {
+  border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+}
 </style>

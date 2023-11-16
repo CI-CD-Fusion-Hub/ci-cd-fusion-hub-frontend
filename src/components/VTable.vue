@@ -113,8 +113,7 @@ export default {
         @keyup.enter="filterResults($event.target.value)"
       />
     </div>
-    <div>
-      <table>
+    <table>
         <div v-if="isLoading" class="loader">
           <font-awesome-icon :icon="['fas', 'spinner']" spin />
         </div>
@@ -148,43 +147,23 @@ export default {
             </td>
           </tr>
         </tbody>
-      </table>
-
-      <nav v-if="pagination && total_pages > 1" class="pagination_holder">
-        <VButton :icon="['fas', 'chevron-left']" tooltip-text="Prev" @on-click="change_page(get_active_page - 1)" />
-        <VButtonSet>
-          <VButton
-            v-for="n in total_pages" :key="n" :is-active="get_active_page === n ? true : false"
-            @on-click="change_page(n)"
-          >
-            {{ n }}
-          </VButton>
-        </VButtonSet>
-        <VButton :icon="['fas', 'chevron-right']" tooltip-text="Next" @on-click="change_page(get_active_page + 1)" />
-      </nav>
-    </div>
+    </table>
+    <nav v-if="pagination && total_pages > 1" class="pagination_holder">
+      <VButton :icon="['fas', 'chevron-left']" tooltip-text="Prev" @on-click="change_page(get_active_page - 1)" />
+      <VButtonSet>
+        <VButton
+          v-for="n in total_pages" :key="n" :is-active="get_active_page === n ? true : false"
+          @on-click="change_page(n)"
+        >
+          {{ n }}
+        </VButton>
+      </VButtonSet>
+      <VButton :icon="['fas', 'chevron-right']" tooltip-text="Next" @on-click="change_page(get_active_page + 1)" />
+    </nav>
   </div>
 </template>
 
 <style>
-.loader {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  background-color: #b7c6e7;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  align-content: center;
-  text-align: center;
-  justify-content: space-evenly;
-  font-size: 20px;
-  color: white;
-  z-index: 9;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -205,6 +184,10 @@ th,
 td {
   padding: 5px 2.5px;
   text-align: left;
+}
+
+tbody tr:last-child {
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 tbody tr:nth-child(odd) {
@@ -231,9 +214,9 @@ table .empty_data {
   gap: 10px;
 }
 
-.table_search+div table {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+.table_search + table,
+.table_search + table .loader {
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 .table_search .input-holder {
