@@ -47,7 +47,6 @@ export default {
   methods: {
     async loadData() {
       try {
-        console.log(this.$route.params.application);
         const response = await this.axios.get(
           `${this.backendUrl}/pipelines/${this.$route.params.application.toLowerCase()}/${this.$route.params.pipeline_id}/builds/${this.$route.params.build_id}`,
         );
@@ -68,7 +67,7 @@ export default {
 
         this.stage_logs[id] = response.data.data;
         this.scrollToBottom();
-        console.log(response.data.data.status);
+
         if (response.data.data.status !== 'running' && response.data.data.status !== 'created' && id in this.interval) {
           console.log(`Clear Interval: ${response.data.data.name}`);
           clearInterval(this.interval[id]);
@@ -84,7 +83,6 @@ export default {
           await this.loadStageLog(e.id);
 
         if ((e.status === 'created' || e.status === 'running') && !(e.id in this.interval)) {
-          console.log(`Start Interval: ${e.name}`);
           this.interval[e.id] = setInterval(async () => {
             await this.loadStageLog(e.id);
           }, 3000);
@@ -120,10 +118,10 @@ export default {
 </script>
 
 <template>
-  <div v-if="!buildInfo.stages" class="loader">
+  <div v-if="isLoading" class="loader">
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
   </div>
-  <div v-else>
+  <div>
     <nav class="stages_holder">
       <div v-for="stage in buildInfo.stages" :key="stage" class="stage">
         <VButton
