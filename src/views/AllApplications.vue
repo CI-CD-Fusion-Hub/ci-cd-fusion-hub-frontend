@@ -57,7 +57,6 @@ export default {
         },
         auth_user: {
           requiredIftype: helpers.withMessage('Authentication User field cannot be empty.', requiredIf(this.formData.type === 'Jenkins')),
-          email,
         },
         auth_pass: {
           required: helpers.withMessage('Token/Password field cannot be empty.', required),
