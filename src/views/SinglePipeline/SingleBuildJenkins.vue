@@ -43,7 +43,7 @@ export default {
         this.scrollToBottom();
       }
       catch (error) {
-        useNotifyStore().add('error', 'Error loading data!');
+        useNotifyStore().add('error', error.data.message || 'Error loading data!');
       }
 
       this.isLoading = false;
@@ -61,21 +61,15 @@ export default {
 
     scrollToBottom() {
       if (this.$refs[this.buildInfo.name])
-        this.$refs[this.buildInfo.name][0].scrollTop = this.$refs[this.buildInfo.name][0].scrollHeight;
+        this.$refs[this.buildInfo.name].scrollTop = this.$refs[this.buildInfo.name].scrollHeight;
     },
   },
 };
 </script>
 
 <template>
-  <div
-    v-if="!buildInfo.name"
-    class="loader"
-  >
-    <font-awesome-icon
-      :icon="['fas', 'spinner']"
-      spin
-    />
+  <div v-if="isLoading" class="loader">
+    <font-awesome-icon :icon="['fas', 'spinner']" spin />
   </div>
   <div v-else>
     <div class="build_info">

@@ -265,10 +265,7 @@ export default {
     <VModal v-model:isActive="isModalVissible">
       <template v-for="param in getAllParameters" :key="param">
         <VTextInput
-          v-if="
-            param.type === 'string'
-              || param.type === 'stringparameterdefinition'
-          " v-model:data="formData[param.key]" type="text" :name="param.key" :placeholder="param.key"
+          v-if="param.type === 'string'" v-model:data="formData[param.key]" type="text" :name="param.key" :placeholder="param.key"
           :icon="['fas', 'tag']" :tooltip-text="param.description" tooltip-pos="left"
         />
         <VTextInput

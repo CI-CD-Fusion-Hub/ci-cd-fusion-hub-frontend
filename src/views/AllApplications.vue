@@ -1,6 +1,6 @@
 <script>
 import { useVuelidate } from '@vuelidate/core';
-import { email, helpers, required, requiredIf, url } from '@vuelidate/validators';
+import { helpers, required, requiredIf, url } from '@vuelidate/validators';
 import VTable from '../components/VTable.vue';
 import VButton from '../components/VButton.vue';
 import VButtonSet from '../components/VButtonSet.vue';
