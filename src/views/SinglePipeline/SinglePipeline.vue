@@ -29,6 +29,7 @@ export default {
     return {
       isLoading: true,
       isBtnLoading: false,
+      isRetryLoading: false,
       isModalBtnLoading: false,
       isModalVissible: false,
       interval: null,
@@ -100,6 +101,7 @@ export default {
       }
 
       this.isLoading = false;
+      this.isRetryLoading = false;
     },
     async getPipelineParams() {
       try {
@@ -128,6 +130,8 @@ export default {
     },
     async retryPipeline(id) {
       try {
+        this.isLoading = true;
+
         const response = await this.axios({
           method: 'post',
           url: `${this.backendUrl
@@ -135,7 +139,8 @@ export default {
             }/builds/${id}/retry`,
         });
 
-        useNotifyStore().add(response.data.status, response.data.message);
+        if (response.data.status !== 200)
+          useNotifyStore().add(response.data.status, response.data.message);
       }
       catch (error) {
         useNotifyStore().add(
@@ -238,7 +243,7 @@ export default {
       <VColumn header="Actions" value="actions">
         <template #body="{ row }">
           <VButtonSet v-if="!row.stages || row?.stages?.length > 0">
-            <VButton v-if="row.status !== 'running'" :icon="['fas', 'arrows-rotate']" tooltip-text="Replay" @on-click="retryPipeline(row.id)" />
+            <VButton v-if="row.status !== 'running' && $route.params.application !== 'GitLab'" :icon="['fas', 'arrows-rotate']" :is-loading="isRetryLoading" tooltip-text="Replay" @on-click="retryPipeline(row.id)" />
             <VButton v-if="row.status === 'running'" :icon="['fas', 'stop']" tooltip-text="Stop" @on-click="stopPipeline(row.id)" />
             <VButton
               v-if="$route.params.application === 'Jenkins'" :icon="['fas', 'eye']" :link-to="{
